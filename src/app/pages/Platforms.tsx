@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpDown, Check, Filter, Search, X } from "lucide-react"
 import { Link } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { SoftwareCard } from "../components/SoftwareCard";
+import { PageTitle } from "../components/PageTitle";
 import { softwareData } from "../data/software";
 
 type SortMode = "default" | "alphabetical" | "popularity";
@@ -107,6 +108,10 @@ export function Platforms() {
 
   return (
     <div className="bg-background min-h-screen text-foreground transition-colors duration-300">
+      <PageTitle
+        title="Plataformas"
+        description="Explora nuestro catálogo de plataformas y soluciones de software a medida. Filtra por categoría y tecnología."
+      />
       <section className="relative px-6 lg:px-12 z-10 pt-32 pb-16">
         <div className="max-w-[1400px] w-full mx-auto">
           <Link

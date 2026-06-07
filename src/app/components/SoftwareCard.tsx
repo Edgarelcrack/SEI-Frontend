@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useRef } from "react";
 import { Link } from "react-router";
 import { ArrowUpRight } from "lucide-react";
 import type { Software } from "../data/software";
@@ -8,11 +8,32 @@ interface SoftwareCardProps {
 }
 
 function SoftwareCardImpl({ software }: SoftwareCardProps) {
+  const ref = useRef<HTMLAnchorElement>(null);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLAnchorElement>) {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty("--spot-x", `${e.clientX - rect.left}px`);
+    el.style.setProperty("--spot-y", `${e.clientY - rect.top}px`);
+  }
+
   return (
     <Link
+      ref={ref}
+      onMouseMove={handleMouseMove}
       to={`/software/${software.id}`}
       className="group block relative w-full dark:border-white/10 border-black/10 border hover:border-[#1B56D2]/50 transition-colors duration-500 dark:bg-[#0a0a0a] bg-zinc-100 rounded-3xl overflow-hidden"
     >
+      {/* Spotlight que sigue el cursor */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
+        style={{
+          background:
+            "radial-gradient(600px circle at var(--spot-x) var(--spot-y), rgba(27,86,210,0.15), transparent 40%)",
+        }}
+      />
+
       {/* Decorative Grid */}
       <div className="absolute inset-0 pointer-events-none opacity-20 transition-opacity duration-500 group-hover:opacity-40">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />

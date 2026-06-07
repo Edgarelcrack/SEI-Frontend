@@ -1,16 +1,79 @@
-import { Github, Linkedin, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUp } from "lucide-react";
 import { Link } from "react-router";
 import { motion } from "motion/react";
+import { Magnetic } from "./Magnetic";
 import logoUrl from "../../imports/Logo-SEI-250px.png";
+
+function formatBogotaTime() {
+  return new Intl.DateTimeFormat("es-CO", {
+    timeZone: "America/Bogota",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(new Date());
+}
+
+/** Reloj en vivo de la hora local de Bogotá. */
+function LocalClock() {
+  const [time, setTime] = useState(formatBogotaTime);
+  useEffect(() => {
+    const id = setInterval(() => setTime(formatBogotaTime()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <span className="font-mono text-xs tracking-widest uppercase text-zinc-500">
+      Bogotá · {time} <span className="text-zinc-600">GMT-5</span>
+    </span>
+  );
+}
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   return (
     <footer className="relative dark:bg-black bg-white pt-32 pb-8 overflow-hidden dark:border-white/10 border-black/10 border-t transition-colors duration-300">
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#1B56D2]/10 rounded-full blur-[150px] mix-blend-screen opacity-30 translate-x-1/3 -translate-y-1/3 pointer-events-none" />
 
+      {/* Wordmark gigante de fondo */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        className="pointer-events-none select-none absolute inset-0 z-0 flex items-center justify-center"
+      >
+        <span className="block whitespace-nowrap leading-none font-black uppercase tracking-tighter text-[34vw] bg-gradient-to-r from-[#1B56D2] via-[#E31E24] to-[#1B56D2] bg-[length:200%_auto] bg-clip-text text-transparent animate-gradient opacity-[0.12] dark:opacity-20">
+          SEI
+        </span>
+      </motion.div>
+
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
+        {/* Volver arriba (magnético) */}
+        <div className="flex justify-end mb-16">
+          <Magnetic strength={0.4}>
+            <button
+              type="button"
+              onClick={scrollToTop}
+              aria-label="Volver arriba"
+              className="group flex items-center gap-3 dark:text-white text-zinc-900"
+            >
+              <span className="text-xs font-bold tracking-widest uppercase text-zinc-500 group-hover:text-foreground transition-colors">
+                Volver arriba
+              </span>
+              <span className="w-12 h-12 rounded-full border border-current flex items-center justify-center group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-all duration-300">
+                <ArrowUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform duration-300" />
+              </span>
+            </button>
+          </Magnetic>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-32">
           {/* Brand */}
           <div className="col-span-1 md:col-span-5 flex flex-col justify-between">
@@ -25,18 +88,17 @@ export function Footer() {
               <p className="text-xl font-light text-zinc-500 max-w-md leading-relaxed tracking-tight">
                 Arquitectos del futuro digital. Ingeniería de software de alto rendimiento para marcas con ambición.
               </p>
-            </div>
 
-            <div className="mt-12 hidden md:block">
-              <a
-                href="mailto:contact@gmail.com"
-                className="group flex items-center gap-4 text-3xl font-black uppercase tracking-tighter dark:text-white text-zinc-900 hover:text-[#1B56D2] transition-colors"
-              >
-                contact@gmail.com
-                <div className="w-12 h-12 rounded-full border border-current flex items-center justify-center group-hover:-rotate-45 transition-transform duration-300">
-                  <ArrowRight className="w-6 h-6" />
-                </div>
-              </a>
+              {/* Estado de disponibilidad */}
+              <div className="mt-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full dark:border-white/15 border-black/15 border">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+                </span>
+                <span className="text-xs font-bold tracking-widest uppercase text-zinc-500">
+                  Disponible para proyectos
+                </span>
+              </div>
             </div>
           </div>
 
@@ -49,8 +111,7 @@ export function Footer() {
               {[
                 { name: "Plataformas", path: "/platforms" },
                 { name: "Servicios de Ingeniería", path: "/services" },
-                { name: "Nuestro Enfoque", path: "#approach" },
-                { name: "Carreras", path: "#careers" }
+                { name: "Nuestro Enfoque", path: "#approach" }
               ].map((link, i) => (
                 <li key={i}>
                   <Link
@@ -64,63 +125,6 @@ export function Footer() {
               ))}
             </ul>
           </div>
-
-          {/* Socials & Address */}
-          <div className="col-span-1 md:col-span-3">
-            <h3 className="text-xs font-bold tracking-widest text-zinc-500 mb-8 uppercase">Conecta</h3>
-            <div className="flex gap-4 mb-12">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full dark:border-white/20 border-black/20 border text-zinc-500 hover:bg-[#1B56D2] hover:text-white hover:border-transparent flex items-center justify-center transition-all duration-300"
-                aria-label="GitHub"
-              >
-                <Github className="w-5 h-5" />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full dark:border-white/20 border-black/20 border text-zinc-500 hover:bg-[#1B56D2] hover:text-white hover:border-transparent flex items-center justify-center transition-all duration-300"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-            </div>
-
-            <div className="text-zinc-500 text-sm font-medium tracking-wide uppercase leading-loose">
-              100 INFORMACION UBICACION
-              <br />
-              INFORMACION, CA 94043
-              <br />
-              COLOMBIA
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Email CTA */}
-        <div className="md:hidden dark:border-white/10 border-black/10 border-y py-8 mb-12">
-          <a
-            href="mailto:contact@kirbinet.com"
-            className="flex items-center justify-between text-2xl font-black uppercase tracking-tighter dark:text-white text-zinc-900 hover:text-[#1B56D2] transition-colors"
-          >
-            contact@gmail.com
-            <ArrowRight className="w-6 h-6" />
-          </a>
-        </div>
-
-        {/* Massive Typography Name */}
-        <div className="w-full mb-12 select-none pointer-events-none">
-          <motion.h1
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[15vw] leading-[0.8] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b dark:from-white dark:to-white/20 from-zinc-800 to-zinc-800/20"
-          >
-            SISTEMAS
-          </motion.h1>
         </div>
 
         {/* Bottom Bar */}
@@ -128,9 +132,12 @@ export function Footer() {
           <p className="text-xs font-bold tracking-widest text-zinc-500 uppercase">
             © {currentYear} TODOS LOS DERECHOS RESERVADOS
           </p>
-          <div className="flex gap-8">
-            <a href="#privacy" className="text-xs font-bold tracking-widest text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 uppercase transition-colors">Privacidad</a>
-            <a href="#terms" className="text-xs font-bold tracking-widest text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 uppercase transition-colors">Términos</a>
+          <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
+            <LocalClock />
+            <div className="flex gap-8">
+              <a href="#privacy" className="text-xs font-bold tracking-widest text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 uppercase transition-colors">Privacidad</a>
+              <a href="#terms" className="text-xs font-bold tracking-widest text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 uppercase transition-colors">Términos</a>
+            </div>
           </div>
         </div>
       </div>

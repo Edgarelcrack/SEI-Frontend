@@ -49,16 +49,14 @@ export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
                 transformStyle: "preserve-3d",
                 transformOrigin: "center center",
                 pointerEvents: isActive ? "auto" : "none",
-                willChange: "transform, opacity, filter",
               }}
               animate={{
                 x: `calc(-50% + ${offset * 38}%)`,
                 y: "-50%",
                 rotateY: offset * -55,
                 scale: isActive ? 1 : 0.82 - (abs - 1) * 0.08,
-                opacity: isActive ? 1 : 0.55 - (abs - 1) * 0.2,
+                opacity: isActive ? 1 : 0.42 - (abs - 1) * 0.15,
                 zIndex: 20 - abs,
-                filter: isActive ? "blur(0px)" : `blur(${abs * 1.5}px)`,
               }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >

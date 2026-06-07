@@ -6,12 +6,165 @@ import {
   ArrowUpRight,
   ArrowRight,
 } from "lucide-react";
+import { useRef, useState } from "react";
 import { Link } from "react-router";
-import { motion } from "motion/react";
+import { motion, useInView, useMotionValue, useMotionTemplate } from "motion/react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
+import { PageTitle } from "../components/PageTitle";
+import { ServiceBlueprint, type BlueprintKind } from "../components/ServiceBlueprint";
+import { CountUp } from "../components/CountUp";
+import { useIsMobile } from "../components/ui/use-mobile";
 import { useTheme } from "../context/ThemeContext";
+
+interface ServiceMetric {
+  value: number;
+  decimals?: number;
+  prefix?: string;
+  suffix: string;
+  label: string;
+}
+
+interface ServiceItem {
+  title: string;
+  desc: string;
+  kind: BlueprintKind;
+  tech: string[];
+  metric: ServiceMetric;
+  icon: React.ReactNode;
+}
+
+function ServiceRow({ service, index }: { service: ServiceItem; index: number }) {
+  const [hovered, setHovered] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const inView = useInView(ref, { amount: 0.6 });
+  // En desktop el esquema se dibuja al pasar el ratón; en móvil, al entrar en pantalla.
+  const active = isMobile ? inView : hovered;
+
+  // Foco que sigue al cursor dentro de la fila.
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const spotlight = useMotionTemplate`radial-gradient(240px circle at ${mx}px ${my}px, rgba(27,86,210,0.18), transparent 72%)`;
+
+  function handleMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mx.set(e.clientX - rect.left);
+    my.set(e.clientY - rect.top);
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, delay: index * 0.1 }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      onMouseMove={handleMove}
+      className="group relative flex flex-col lg:flex-row items-start lg:items-center justify-between py-16 lg:py-24 dark:border-white/10 border-black/10 border-b hover:border-[#1B56D2] transition-colors duration-500 gap-8 lg:gap-24 overflow-hidden"
+    >
+      {/* Hover Background Accent */}
+      <div className="absolute inset-0 bg-[#1B56D2]/5 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" />
+
+      {/* Número fantasma gigante */}
+      <motion.span
+        aria-hidden="true"
+        className="pointer-events-none absolute right-2 lg:right-10 top-1/2 z-0 select-none font-black leading-none text-transparent"
+        style={{
+          fontSize: "clamp(7rem, 20vw, 15rem)",
+          WebkitTextStroke: "2px #1B56D2",
+          paintOrder: "stroke",
+        }}
+        initial={{ opacity: 0, x: 60, y: "-50%" }}
+        animate={active ? { opacity: 0.1, x: 0, y: "-50%" } : { opacity: 0, x: 60, y: "-50%" }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      >
+        0{index + 1}
+      </motion.span>
+
+      {/* Esquema técnico que se dibuja al activar la fila */}
+      <ServiceBlueprint
+        kind={service.kind}
+        active={active}
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full text-[#1B56D2] opacity-50 dark:opacity-60"
+      />
+
+      {/* Foco que sigue al cursor */}
+      {!isMobile && (
+        <motion.div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 z-[1] transition-opacity duration-300 ${hovered ? "opacity-100" : "opacity-0"}`}
+          style={{ background: spotlight }}
+        />
+      )}
+
+      <div className="flex items-start gap-8 relative z-10 w-full lg:w-auto">
+        <div className="text-zinc-500 font-mono text-sm tracking-widest pt-2">
+          0{index + 1}
+        </div>
+        <div>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase group-hover:text-[#1B56D2] transition-colors duration-500 max-w-xl leading-none">
+            {service.title}
+          </h2>
+          {/* Métrica que cuenta al activar la fila */}
+          <motion.div
+            className="mt-5 flex items-baseline gap-3"
+            initial={{ opacity: 0, y: 8 }}
+            animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="text-3xl md:text-4xl font-black tracking-tighter tabular-nums">
+              {service.metric.prefix}
+              <CountUp
+                to={service.metric.value}
+                decimals={service.metric.decimals}
+                duration={1.4}
+                trigger={active}
+              />
+              <span className="text-[#E31E24]">{service.metric.suffix}</span>
+            </span>
+            <span className="text-xs font-bold tracking-widest uppercase text-zinc-500">
+              {service.metric.label}
+            </span>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-8 lg:w-[500px] shrink-0">
+        <div className="flex-1">
+          <div className="text-zinc-500 font-light text-lg md:text-xl leading-relaxed">
+            {service.desc}
+          </div>
+          <motion.div
+            className="flex flex-wrap gap-2 mt-5"
+            initial="hidden"
+            animate={active ? "visible" : "hidden"}
+            variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
+          >
+            {service.tech.map((t) => (
+              <motion.span
+                key={t}
+                variants={{
+                  hidden: { opacity: 0, y: 8 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                className="px-3 py-1 rounded-full border dark:border-white/20 border-black/20 text-[11px] font-mono uppercase tracking-widest text-zinc-500 dark:bg-black/30 bg-white/40 backdrop-blur-sm"
+              >
+                {t}
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
+        <div className="w-16 h-16 rounded-full dark:border-white/20 border-black/20 border flex items-center justify-center shrink-0 group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-all duration-500">
+          <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export function Services() {
   const { isDark } = useTheme();
@@ -21,31 +174,47 @@ export function Services() {
     alert("Consulta recibida. Nos pondremos en contacto contigo en breve.");
   };
 
-  const services = [
+  const services: ServiceItem[] = [
     {
       title: "ARQUITECTURA DE SISTEMAS",
       desc: "Infraestructura full-stack de extremo a extremo, diseñada para rendimiento y escala. React, Node, Edge Computing.",
+      kind: "architecture",
+      tech: ["React", "Node", "Edge", "PostgreSQL"],
+      metric: { value: 99.99, decimals: 2, suffix: "%", label: "Uptime objetivo" },
       icon: <Code2 className="w-8 h-8" />
     },
     {
       title: "DESPLIEGUE EN LA NUBE",
       desc: "Pipelines CI/CD, orquestación de contenedores y arquitecturas serverless optimizadas para alta disponibilidad.",
+      kind: "deploy",
+      tech: ["Docker", "Kubernetes", "Serverless", "AWS"],
+      metric: { value: 45, suffix: "s", label: "Build & deploy" },
       icon: <Rocket className="w-8 h-8" />
     },
     {
       title: "OPERACIONES TÉCNICAS",
       desc: "Monitoreo 24/7, auditorías de seguridad, gestión de dependencias y resolución de incidentes en tiempo real.",
+      kind: "ops",
+      tech: ["Grafana", "SLA 99.9%", "SIEM", "On-call"],
+      metric: { value: 1.4, decimals: 1, suffix: "M", label: "Eventos / día" },
       icon: <Wrench className="w-8 h-8" />
     },
     {
       title: "ESTRATEGIA & CONSULTORÍA",
       desc: "Transformación digital, migración de sistemas legados y liderazgo de ingeniería para equipos empresariales.",
+      kind: "strategy",
+      tech: ["Discovery", "Roadmap", "Legacy→Cloud", "Mentoring"],
+      metric: { value: 300, prefix: "+", suffix: "%", label: "Escala lograda" },
       icon: <Users className="w-8 h-8" />
     }
   ];
 
   return (
     <div className="bg-background min-h-screen text-foreground pt-32 font-sans overflow-hidden transition-colors duration-300">
+      <PageTitle
+        title="Servicios de software"
+        description="Arquitectura de sistemas, desarrollo full-stack y consultoría técnica. Ingeniería de software de alto rendimiento para marcas con ambición."
+      />
 
       {/* Hero Section */}
       <section className="relative px-6 lg:px-12 py-20 z-10 dark:border-white/10 border-black/10 border-b">
@@ -81,35 +250,7 @@ export function Services() {
         <div className="max-w-[1400px] w-full mx-auto">
           <div className="flex flex-col">
             {services.map((service, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="group relative flex flex-col lg:flex-row items-start lg:items-center justify-between py-16 lg:py-24 dark:border-white/10 border-black/10 border-b hover:border-[#1B56D2] transition-colors duration-500 gap-8 lg:gap-24 overflow-hidden"
-              >
-                {/* Hover Background Accent */}
-                <div className="absolute inset-0 bg-[#1B56D2]/5 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" />
-
-                <div className="flex items-center gap-8 relative z-10 w-full lg:w-auto">
-                  <div className="text-zinc-500 font-mono text-sm tracking-widest">
-                    0{index + 1}
-                  </div>
-                  <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase group-hover:text-[#1B56D2] transition-colors duration-500 max-w-xl leading-none">
-                    {service.title}
-                  </h2>
-                </div>
-
-                <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-8 lg:w-[500px] shrink-0">
-                  <div className="text-zinc-500 font-light text-lg md:text-xl leading-relaxed">
-                    {service.desc}
-                  </div>
-                  <div className="w-16 h-16 rounded-full dark:border-white/20 border-black/20 border flex items-center justify-center shrink-0 group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-all duration-500">
-                    <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform" />
-                  </div>
-                </div>
-              </motion.div>
+              <ServiceRow key={service.kind} service={service} index={index} />
             ))}
           </div>
         </div>

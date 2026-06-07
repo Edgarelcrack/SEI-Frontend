@@ -1,30 +1,12 @@
-import { memo, useEffect, useRef } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
-import { motion, useScroll, useTransform, useInView, animate } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { PlatformsCarousel } from "../components/PlatformsCarousel";
 import { FeaturedPlatform } from "../components/FeaturedPlatform";
+import { Magnetic } from "../components/Magnetic";
+import { PageTitle } from "../components/PageTitle";
+import { CountUp } from "../components/CountUp";
 import { softwareData } from "../data/software";
-
-const CountUp = memo(function CountUp({ to, decimals = 0 }: { to: number; decimals?: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.4 });
-
-  useEffect(() => {
-    if (!isInView || !ref.current) return;
-    const node = ref.current;
-    const controls = animate(0, to, {
-      duration: 2,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate(value) {
-        node.textContent = value.toFixed(decimals);
-      },
-    });
-    return () => controls.stop();
-  }, [isInView, to, decimals]);
-
-  return <span ref={ref}>0</span>;
-});
 
 const featuredPlatform = softwareData.find((s) => s.featured) ?? softwareData[0];
 const otherPlatforms = softwareData.filter((s) => s.id !== featuredPlatform?.id);
@@ -35,12 +17,16 @@ export function Home() {
 
   return (
     <div className="bg-background min-h-screen text-foreground overflow-hidden transition-colors duration-300">
+      <PageTitle
+        title="Desarrollo de software a medida"
+        description="Diseñamos productos digitales escalables, brutalistas y ultramodernos. Ingeniería de software de alto rendimiento para marcas con ambición."
+      />
       {/* Dynamic Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay" />
         <motion.div
           style={{ y, willChange: "transform" }}
-          className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full bg-[#1B56D2] opacity-[0.04] blur-[100px] mix-blend-screen"
+          className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full bg-[#1B56D2] opacity-[0.04] blur-[60px] mix-blend-screen"
         />
       </div>
 
@@ -75,13 +61,10 @@ export function Home() {
           </div>
           <div className="overflow-hidden mb-12">
             <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase text-transparent"
-              style={{
-                WebkitTextStroke: "3px #1B56D2"
-              }}
+              className="text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase bg-gradient-to-r from-[#1B56D2] via-[#E31E24] to-[#1B56D2] bg-[length:200%_auto] bg-clip-text text-transparent animate-gradient"
             >
               SEI.
             </motion.h1>
@@ -104,13 +87,15 @@ export function Home() {
               transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="flex shrink-0"
             >
-              <Link
-                to="/services"
-                className="group flex items-center justify-center gap-4 bg-[#E31E24] text-white w-40 h-40 rounded-full text-sm font-black tracking-widest uppercase hover:scale-105 hover:bg-[#1B56D2] transition-all duration-500 ease-out"
-              >
-                HABLEMOS
-                <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform" />
-              </Link>
+              <Magnetic strength={0.5}>
+                <Link
+                  to="/services"
+                  className="group flex items-center justify-center gap-4 bg-[#E31E24] text-white w-40 h-40 rounded-full text-sm font-black tracking-widest uppercase hover:bg-[#1B56D2] transition-colors duration-500 ease-out"
+                >
+                  HABLEMOS
+                  <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform" />
+                </Link>
+              </Magnetic>
             </motion.div>
           </div>
         </div>
@@ -118,14 +103,9 @@ export function Home() {
 
       {/* Infinite Marquee */}
       <section className="relative z-10 py-12 bg-[#1B56D2] text-white overflow-hidden flex items-center border-y dark:border-black/30 border-[#1B56D2]">
-        <motion.div
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
-          style={{ willChange: "transform" }}
-          className="flex whitespace-nowrap text-5xl md:text-7xl font-black tracking-tighter uppercase"
-        >
-          {Array(4).fill(0).map((_, i) => (
-            <div key={i} className="flex items-center gap-12 px-6">
+        <div className="animate-marquee flex whitespace-nowrap text-5xl md:text-7xl font-black tracking-tighter uppercase">
+          {[0, 1].map((i) => (
+            <div key={i} aria-hidden={i > 0} className="flex items-center gap-12 px-6">
               <span>INGENIERÍA</span>
               <span className="text-white/30">✦</span>
               <span>DISEÑO</span>
@@ -136,7 +116,7 @@ export function Home() {
               <span className="text-white/30">✦</span>
             </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* Stats Section */}
@@ -154,7 +134,7 @@ export function Home() {
                   <CountUp
                     to={parseFloat(stat.num)}
                     decimals={stat.num.includes('.') ? stat.num.split('.')[1].length : 0}
-                  /><span className="text-[#1B56D2]">{stat.sym}</span>
+                  /><span className="text-[#E31E24]">{stat.sym}</span>
                 </div>
                 <div className="text-xs font-bold tracking-widest text-zinc-500 uppercase">{stat.label}</div>
               </div>
@@ -238,7 +218,7 @@ export function Home() {
       {/* Outro CTA */}
       <section className="cv-auto py-40 px-6 lg:px-12 relative z-10 dark:border-white/10 border-black/10 border-t dark:bg-[#0a0a0a] bg-zinc-100 overflow-hidden transition-colors duration-300">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-[#1B56D2]/5 blur-[120px] rounded-full" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-[#1B56D2]/5 blur-[80px] rounded-full" />
         </div>
 
         <div className="max-w-[1400px] w-full mx-auto flex flex-col items-center text-center relative z-10">

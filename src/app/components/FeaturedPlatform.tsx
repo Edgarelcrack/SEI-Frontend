@@ -25,8 +25,8 @@ function FeaturedPlatformImpl({ software }: FeaturedPlatformProps) {
           <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:48px_48px]" />
         </div>
 
-        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[#1B56D2]/10 blur-[120px] pointer-events-none" />
-        <div className="absolute -bottom-40 -left-32 w-[420px] h-[420px] rounded-full bg-[#E31E24]/10 blur-[120px] pointer-events-none" />
+        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[#1B56D2]/10 blur-[80px] pointer-events-none" />
+        <div className="absolute -bottom-40 -left-32 w-[420px] h-[420px] rounded-full bg-[#E31E24]/10 blur-[80px] pointer-events-none" />
 
         <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 p-6 md:p-12 lg:p-16 z-10">
           <div className="flex flex-col">

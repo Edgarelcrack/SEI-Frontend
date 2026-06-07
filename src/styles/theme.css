@@ -85,7 +85,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Manrope', sans-serif;
+  --font-sans: 'SiesaBT', 'Inter', sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -133,7 +133,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'SiesaBT', 'Inter', sans-serif;
   }
 
   /**

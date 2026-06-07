@@ -11,7 +11,6 @@
  * 4. Fill in shortDescription for the overview
  * 5. Fill in advancedDescription for technical users
  * 
- * See SETUP_GUIDE.md for detailed instructions.
  */
 
 // Software data model - designed for easy migration to database

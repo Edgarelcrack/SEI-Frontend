@@ -19,7 +19,7 @@ export function SoftwareDetail() {
 
   return (
     <div className="bg-background min-h-screen text-foreground pb-32 font-sans transition-colors duration-300">
-      <PageTitle title={`${software.name} | KIRBINET`} />
+      <PageTitle title={software.name} description={software.shortDescription} />
 
       {/* Immersive Header */}
       <div className="relative min-h-[80vh] flex flex-col justify-end pb-24 overflow-hidden dark:border-white/10 border-black/10 border-b">
