@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { Magnetic } from "./Magnetic";
 import logoUrl from "../../imports/Logo-SEI-250px.png";
 
-function formatBogotaTime() {
+function formatCaliTime() {
   return new Intl.DateTimeFormat("es-CO", {
     timeZone: "America/Bogota",
     hour: "2-digit",
@@ -15,16 +15,16 @@ function formatBogotaTime() {
   }).format(new Date());
 }
 
-/** Reloj en vivo de la hora local de Bogotá. */
+/** Reloj en vivo de la hora local de Cali. */
 function LocalClock() {
-  const [time, setTime] = useState(formatBogotaTime);
+  const [time, setTime] = useState(formatCaliTime);
   useEffect(() => {
-    const id = setInterval(() => setTime(formatBogotaTime()), 1000);
+    const id = setInterval(() => setTime(formatCaliTime()), 1000);
     return () => clearInterval(id);
   }, []);
   return (
     <span className="font-mono text-xs tracking-widest uppercase text-zinc-500">
-      Bogotá · {time} <span className="text-zinc-600">GMT-5</span>
+      Cali · {time} <span className="text-zinc-600">GMT-5</span>
     </span>
   );
 }
@@ -88,17 +88,6 @@ export function Footer() {
               <p className="text-xl font-light text-zinc-500 max-w-md leading-relaxed tracking-tight">
                 Arquitectos del futuro digital. Ingeniería de software de alto rendimiento para marcas con ambición.
               </p>
-
-              {/* Estado de disponibilidad */}
-              <div className="mt-8 inline-flex items-center gap-2.5 px-4 py-2 rounded-full dark:border-white/15 border-black/15 border">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
-                </span>
-                <span className="text-xs font-bold tracking-widest uppercase text-zinc-500">
-                  Disponible para proyectos
-                </span>
-              </div>
             </div>
           </div>
 
