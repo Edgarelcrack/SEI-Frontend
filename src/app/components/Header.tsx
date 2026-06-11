@@ -107,7 +107,7 @@ export function Header() {
           </motion.button>
 
           <Link
-            to="/services"
+            to="/services#contacto"
             className="group flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-[#1B56D2] text-white px-6 py-3 rounded-full hover:bg-[#E31E24] transition-colors duration-300"
           >
             HABLEMOS

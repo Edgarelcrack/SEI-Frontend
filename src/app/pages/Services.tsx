@@ -14,24 +14,15 @@ import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { PageTitle } from "../components/PageTitle";
 import { ServiceBlueprint, type BlueprintKind } from "../components/ServiceBlueprint";
-import { CountUp } from "../components/CountUp";
+import { RevealText } from "../components/RevealText";
 import { useIsMobile } from "../components/ui/use-mobile";
 import { useTheme } from "../context/ThemeContext";
-
-interface ServiceMetric {
-  value: number;
-  decimals?: number;
-  prefix?: string;
-  suffix: string;
-  label: string;
-}
 
 interface ServiceItem {
   title: string;
   desc: string;
   kind: BlueprintKind;
   tech: string[];
-  metric: ServiceMetric;
   icon: React.ReactNode;
 }
 
@@ -64,101 +55,89 @@ function ServiceRow({ service, index }: { service: ServiceItem; index: number })
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       onMouseMove={handleMove}
-      className="group relative flex flex-col lg:flex-row items-start lg:items-center justify-between py-16 lg:py-24 dark:border-white/10 border-black/10 border-b hover:border-[#1B56D2] transition-colors duration-500 gap-8 lg:gap-24 overflow-hidden"
+      className="group relative flex flex-col lg:flex-row items-start lg:items-center justify-between py-16 lg:py-20 dark:border-white/10 border-black/10 border-b hover:border-[#1B56D2] transition-colors duration-500 gap-10 lg:gap-16 overflow-hidden"
     >
-      {/* Hover Background Accent */}
+      {/* Acento de fondo al hover */}
       <div className="absolute inset-0 bg-[#1B56D2]/5 translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" />
 
-      {/* Número fantasma gigante */}
-      <motion.span
-        aria-hidden="true"
-        className="pointer-events-none absolute right-2 lg:right-10 top-1/2 z-0 select-none font-black leading-none text-transparent"
-        style={{
-          fontSize: "clamp(7rem, 20vw, 15rem)",
-          WebkitTextStroke: "2px #1B56D2",
-          paintOrder: "stroke",
-        }}
-        initial={{ opacity: 0, x: 60, y: "-50%" }}
-        animate={active ? { opacity: 0.1, x: 0, y: "-50%" } : { opacity: 0, x: 60, y: "-50%" }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      >
-        0{index + 1}
-      </motion.span>
-
-      {/* Esquema técnico que se dibuja al activar la fila */}
-      <ServiceBlueprint
-        kind={service.kind}
-        active={active}
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full text-[#1B56D2] opacity-50 dark:opacity-60"
-      />
-
-      {/* Foco que sigue al cursor */}
+      {/* Glow del cursor sobre toda la fila (solo desktop) */}
       {!isMobile && (
         <motion.div
           aria-hidden="true"
-          className={`pointer-events-none absolute inset-0 z-[1] transition-opacity duration-300 ${hovered ? "opacity-100" : "opacity-0"}`}
+          className={`pointer-events-none absolute inset-0 z-0 transition-opacity duration-500 ${hovered ? "opacity-100" : "opacity-0"}`}
           style={{ background: spotlight }}
         />
       )}
 
-      <div className="flex items-start gap-8 relative z-10 w-full lg:w-auto">
-        <div className="text-zinc-500 font-mono text-sm tracking-widest pt-2">
-          0{index + 1}
+      {/* ---------- Texto agrupado (izquierda) ---------- */}
+      <div className="relative z-10 w-full lg:w-[34%] shrink-0">
+        {/* Cabecera: número — regla */}
+        <div className="flex items-center gap-5 mb-6">
+          <span className="font-mono text-sm tracking-widest text-zinc-500">0{index + 1}</span>
+          <span className="h-px flex-1 dark:bg-white/10 bg-black/10" />
         </div>
-        <div>
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase group-hover:text-[#1B56D2] transition-colors duration-500 max-w-xl leading-none">
-            {service.title}
-          </h2>
-          {/* Métrica que cuenta al activar la fila */}
-          <motion.div
-            className="mt-5 flex items-baseline gap-3"
-            initial={{ opacity: 0, y: 8 }}
-            animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="text-3xl md:text-4xl font-black tracking-tighter tabular-nums">
-              {service.metric.prefix}
-              <CountUp
-                to={service.metric.value}
-                decimals={service.metric.decimals}
-                duration={1.4}
-                trigger={active}
-              />
-              <span className="text-[#E31E24]">{service.metric.suffix}</span>
+
+        <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase group-hover:text-[#1B56D2] transition-colors duration-500 leading-none">
+          {service.title}
+        </h2>
+
+        <p className="mt-6 text-zinc-500 font-light text-lg md:text-xl leading-relaxed">
+          {service.desc}
+        </p>
+
+        {/* Chips de stack */}
+        <motion.div
+          className="flex flex-wrap gap-2 mt-6"
+          initial="hidden"
+          animate={active ? "visible" : "hidden"}
+          variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
+        >
+          {service.tech.map((t) => (
+            <motion.span
+              key={t}
+              variants={{
+                hidden: { opacity: 0, y: 8 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              className="px-3 py-1 rounded-full border dark:border-white/20 border-black/20 text-[11px] font-mono uppercase tracking-widest text-zinc-500 dark:bg-black/30 bg-white/40 backdrop-blur-sm"
+            >
+              {t}
+            </motion.span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* ---------- Figura técnica (centro, grande, sin caja) ---------- */}
+      <div className="relative z-10 w-full lg:flex-1 h-[260px] lg:h-[340px] flex items-center justify-center">
+        {/* Halo de respaldo que aparece al activar */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 rounded-full bg-[#1B56D2]/10 blur-[70px] transition-opacity duration-700 ${active ? "opacity-100" : "opacity-0"}`}
+        />
+
+        {/* Esquema técnico */}
+        <ServiceBlueprint
+          kind={service.kind}
+          active={active}
+          className="relative z-10 h-full w-full text-[#1B56D2]"
+        />
+
+        {/* Anotación tipo plano */}
+        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between font-mono text-[10px] tracking-[0.3em] uppercase text-zinc-500">
+          <span>fig.0{index + 1}</span>
+          <span className="flex items-center gap-1.5">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className={`absolute inline-flex h-full w-full rounded-full bg-[#1B56D2] opacity-75 ${active ? "animate-ping" : ""}`} />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#1B56D2]" />
             </span>
-            <span className="text-xs font-bold tracking-widest uppercase text-zinc-500">
-              {service.metric.label}
-            </span>
-          </motion.div>
+            esquema
+          </span>
         </div>
       </div>
 
-      <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-8 lg:w-[500px] shrink-0">
-        <div className="flex-1">
-          <div className="text-zinc-500 font-light text-lg md:text-xl leading-relaxed">
-            {service.desc}
-          </div>
-          <motion.div
-            className="flex flex-wrap gap-2 mt-5"
-            initial="hidden"
-            animate={active ? "visible" : "hidden"}
-            variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
-          >
-            {service.tech.map((t) => (
-              <motion.span
-                key={t}
-                variants={{
-                  hidden: { opacity: 0, y: 8 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                className="px-3 py-1 rounded-full border dark:border-white/20 border-black/20 text-[11px] font-mono uppercase tracking-widest text-zinc-500 dark:bg-black/30 bg-white/40 backdrop-blur-sm"
-              >
-                {t}
-              </motion.span>
-            ))}
-          </motion.div>
-        </div>
-        <div className="w-16 h-16 rounded-full dark:border-white/20 border-black/20 border flex items-center justify-center shrink-0 group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-all duration-500">
+      {/* ---------- Flecha (derecha, centrada) ---------- */}
+      <div className="relative z-10 shrink-0 self-end lg:self-center">
+        <div className="w-16 h-16 rounded-full dark:border-white/20 border-black/20 border flex items-center justify-center group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-all duration-500">
           <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform" />
         </div>
       </div>
@@ -180,7 +159,6 @@ export function Services() {
       desc: "Infraestructura full-stack de extremo a extremo, diseñada para rendimiento y escala. React, Node, Edge Computing.",
       kind: "architecture",
       tech: ["React", "Node", "Edge", "PostgreSQL"],
-      metric: { value: 99.99, decimals: 2, suffix: "%", label: "Uptime objetivo" },
       icon: <Code2 className="w-8 h-8" />
     },
     {
@@ -188,7 +166,6 @@ export function Services() {
       desc: "Pipelines CI/CD, orquestación de contenedores y arquitecturas serverless optimizadas para alta disponibilidad.",
       kind: "deploy",
       tech: ["Docker", "Kubernetes", "Serverless", "AWS"],
-      metric: { value: 45, suffix: "s", label: "Build & deploy" },
       icon: <Rocket className="w-8 h-8" />
     },
     {
@@ -196,7 +173,6 @@ export function Services() {
       desc: "Monitoreo 24/7, auditorías de seguridad, gestión de dependencias y resolución de incidentes en tiempo real.",
       kind: "ops",
       tech: ["Grafana", "SLA 99.9%", "SIEM", "On-call"],
-      metric: { value: 1.4, decimals: 1, suffix: "M", label: "Eventos / día" },
       icon: <Wrench className="w-8 h-8" />
     },
     {
@@ -204,7 +180,6 @@ export function Services() {
       desc: "Transformación digital, migración de sistemas legados y liderazgo de ingeniería para equipos empresariales.",
       kind: "strategy",
       tech: ["Discovery", "Roadmap", "Legacy→Cloud", "Mentoring"],
-      metric: { value: 300, prefix: "+", suffix: "%", label: "Escala lograda" },
       icon: <Users className="w-8 h-8" />
     }
   ];
@@ -238,9 +213,11 @@ export function Services() {
               </span>
             </h1>
 
-            <p className="text-xl md:text-3xl text-zinc-500 font-light max-w-3xl leading-relaxed tracking-tight">
-              Ofrecemos capacidades de ingeniería de élite. Desde construir productos desde cero hasta mantener cargas de trabajo empresariales masivas.
-            </p>
+            <RevealText
+              text="Ofrecemos capacidades de ingeniería de élite. Desde construir productos desde cero hasta mantener cargas de trabajo empresariales masivas."
+              delay={0.25}
+              className="text-xl md:text-3xl text-zinc-500 font-light max-w-3xl leading-relaxed tracking-tight"
+            />
           </motion.div>
         </div>
       </section>
@@ -276,7 +253,7 @@ export function Services() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-32 px-6 lg:px-12 relative z-10 bg-background transition-colors duration-300">
+      <section id="contacto" className="scroll-mt-32 py-32 px-6 lg:px-12 relative z-10 bg-background transition-colors duration-300">
         <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20">
 
           <div className="flex flex-col justify-between">

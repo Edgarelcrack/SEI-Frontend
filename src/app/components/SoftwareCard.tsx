@@ -1,6 +1,7 @@
 import { memo, useRef } from "react";
 import { Link } from "react-router";
 import { ArrowUpRight } from "lucide-react";
+import { TiltCard } from "./TiltCard";
 import type { Software } from "../data/software";
 
 interface SoftwareCardProps {
@@ -19,12 +20,14 @@ function SoftwareCardImpl({ software }: SoftwareCardProps) {
   }
 
   return (
-    <Link
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      to={`/software/${software.id}`}
-      className="group block relative w-full dark:border-white/10 border-black/10 border hover:border-[#1B56D2]/50 transition-colors duration-500 dark:bg-[#0a0a0a] bg-zinc-100 rounded-3xl overflow-hidden"
-    >
+    <TiltCard className="h-full">
+      <Link
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        to={`/software/${software.id}`}
+        data-cursor="ver"
+        className="group block relative w-full h-full dark:border-white/10 border-black/10 border hover:border-[#1B56D2]/50 transition-colors duration-500 dark:bg-[#0a0a0a] bg-zinc-100 rounded-3xl overflow-hidden"
+      >
       {/* Spotlight que sigue el cursor */}
       <div
         className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
@@ -104,7 +107,8 @@ function SoftwareCardImpl({ software }: SoftwareCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+      </Link>
+    </TiltCard>
   );
 }
 

@@ -82,7 +82,7 @@ export function Footer() {
                 <img
                   src={logoUrl}
                   alt="SEI Logo"
-                  className="h-10 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ease-out origin-left"
+                  className="h-28 md:h-36 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ease-out origin-left"
                 />
               </Link>
               <p className="text-xl font-light text-zinc-500 max-w-md leading-relaxed tracking-tight">
@@ -100,7 +100,7 @@ export function Footer() {
               {[
                 { name: "Plataformas", path: "/platforms" },
                 { name: "Servicios de Ingeniería", path: "/services" },
-                { name: "Nuestro Enfoque", path: "#approach" }
+                { name: "Nuestro Enfoque", path: "/#approach" }
               ].map((link, i) => (
                 <li key={i}>
                   <Link
@@ -124,8 +124,8 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
             <LocalClock />
             <div className="flex gap-8">
-              <a href="#privacy" className="text-xs font-bold tracking-widest text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 uppercase transition-colors">Privacidad</a>
-              <a href="#terms" className="text-xs font-bold tracking-widest text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 uppercase transition-colors">Términos</a>
+              <Link to="/privacidad" className="text-xs font-bold tracking-widest text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 uppercase transition-colors">Privacidad</Link>
+              <Link to="/terminos" className="text-xs font-bold tracking-widest text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 uppercase transition-colors">Términos</Link>
             </div>
           </div>
         </div>

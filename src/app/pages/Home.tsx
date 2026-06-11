@@ -6,6 +6,8 @@ import { FeaturedPlatform } from "../components/FeaturedPlatform";
 import { Magnetic } from "../components/Magnetic";
 import { PageTitle } from "../components/PageTitle";
 import { CountUp } from "../components/CountUp";
+import { RevealText } from "../components/RevealText";
+import { HowWeWork } from "../components/HowWeWork";
 import { softwareData } from "../data/software";
 
 const featuredPlatform = softwareData.find((s) => s.featured) ?? softwareData[0];
@@ -71,15 +73,11 @@ export function Home() {
           </div>
 
           <div className="flex flex-col md:flex-row gap-10 md:gap-20 md:items-end justify-between dark:border-white/10 border-black/10 border-t pt-10 mt-20">
-            <motion.p
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.5 }}
+            <RevealText
+              text="Diseñamos productos digitales escalables, brutalistas y ultramodernos. Hechos para marcas visionarias que exigen excelencia."
+              delay={0.5}
               className="text-xl md:text-2xl font-light text-zinc-500 max-w-2xl leading-relaxed tracking-tight"
-            >
-              Diseñamos productos digitales escalables, brutalistas y ultramodernos.
-              Hechos para marcas visionarias que exigen excelencia.
-            </motion.p>
+            />
 
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -89,7 +87,7 @@ export function Home() {
             >
               <Magnetic strength={0.5}>
                 <Link
-                  to="/services"
+                  to="/services#contacto"
                   className="group flex items-center justify-center gap-4 bg-[#E31E24] text-white w-40 h-40 rounded-full text-sm font-black tracking-widest uppercase hover:bg-[#1B56D2] transition-colors duration-500 ease-out"
                 >
                   HABLEMOS
@@ -214,6 +212,9 @@ export function Home() {
           </div>
         </section>
       )}
+
+      {/* Cómo trabajamos (ancla #approach) */}
+      <HowWeWork />
 
       {/* Outro CTA */}
       <section className="cv-auto py-40 px-6 lg:px-12 relative z-10 dark:border-white/10 border-black/10 border-t dark:bg-[#0a0a0a] bg-zinc-100 overflow-hidden transition-colors duration-300">

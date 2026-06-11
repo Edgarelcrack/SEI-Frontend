@@ -22,3 +22,46 @@
   animation: gradient-shift 6s ease-in-out infinite;
   will-change: background-position;
 }
+
+/* Cursor personalizado: oculta el nativo solo cuando está activo (desktop). */
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none !important;
+}
+html.has-custom-cursor input,
+html.has-custom-cursor textarea,
+html.has-custom-cursor select {
+  cursor: auto !important;
+}
+
+/* Glitch brutalista para la 404: cortes duros con clip-path. */
+@keyframes glitch-a {
+  0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0, 0); }
+  8%  { clip-path: inset(8% 0 64% 0);  transform: translate(-10px, -2px); }
+  11% { clip-path: inset(42% 0 38% 0); transform: translate(7px, 2px); }
+  14% { clip-path: inset(75% 0 4% 0);  transform: translate(-5px, 4px); }
+  17% { clip-path: inset(0 0 100% 0);  transform: translate(0, 0); }
+  54% { clip-path: inset(0 0 100% 0);  transform: translate(0, 0); }
+  57% { clip-path: inset(25% 0 55% 0); transform: translate(9px, -3px); }
+  60% { clip-path: inset(60% 0 18% 0); transform: translate(-8px, 1px); }
+  63% { clip-path: inset(0 0 100% 0);  transform: translate(0, 0); }
+}
+
+@utility animate-glitch-a {
+  animation: glitch-a 3.6s steps(1, end) infinite;
+}
+
+@keyframes glitch-b {
+  0%, 20%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0, 0); }
+  23% { clip-path: inset(55% 0 25% 0); transform: translate(8px, 3px); }
+  26% { clip-path: inset(15% 0 70% 0); transform: translate(-9px, -2px); }
+  29% { clip-path: inset(80% 0 2% 0);  transform: translate(6px, -3px); }
+  32% { clip-path: inset(0 0 100% 0);  transform: translate(0, 0); }
+  78% { clip-path: inset(0 0 100% 0);  transform: translate(0, 0); }
+  81% { clip-path: inset(35% 0 45% 0); transform: translate(-7px, 2px); }
+  84% { clip-path: inset(0 0 100% 0);  transform: translate(0, 0); }
+}
+
+@utility animate-glitch-b {
+  animation: glitch-b 2.8s steps(1, end) infinite;
+}

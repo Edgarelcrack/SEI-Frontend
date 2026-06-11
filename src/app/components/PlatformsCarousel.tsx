@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SoftwareCard } from "./SoftwareCard";
 import type { Software } from "../data/software";
+
+const SWIPE_OFFSET = 60;
+const SWIPE_VELOCITY = 400;
 
 interface PlatformsCarouselProps {
   items: Software[];
@@ -10,6 +13,7 @@ interface PlatformsCarouselProps {
 
 export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
   const [index, setIndex] = useState(0);
+  const draggingRef = useRef(false);
   const total = items.length;
 
   if (total === 0) return null;
@@ -26,11 +30,46 @@ export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
 
   return (
     <div className="relative w-full">
-      <div
-        className="relative w-full flex items-center justify-center select-none"
+      <motion.div
+        role="region"
+        aria-roledescription="carrusel"
+        aria-label="Carrusel de plataformas"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            prev();
+          } else if (e.key === "ArrowRight") {
+            e.preventDefault();
+            next();
+          }
+        }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.14}
+        dragMomentum={false}
+        onDragStart={() => {
+          draggingRef.current = true;
+        }}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -SWIPE_OFFSET || info.velocity.x < -SWIPE_VELOCITY) next();
+          else if (info.offset.x > SWIPE_OFFSET || info.velocity.x > SWIPE_VELOCITY) prev();
+          // Pequeño margen para que el click posterior al drag no abra la card.
+          setTimeout(() => {
+            draggingRef.current = false;
+          }, 60);
+        }}
+        onClickCapture={(e) => {
+          if (draggingRef.current) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
+        className="relative w-full flex items-center justify-center select-none outline-none focus-visible:ring-2 focus-visible:ring-[#1B56D2]/60 rounded-3xl cursor-grab active:cursor-grabbing"
         style={{
           perspective: "2200px",
           height: "clamp(560px, 70vw, 760px)",
+          touchAction: "pan-y",
         }}
       >
         {items.map((item, i) => {
@@ -95,7 +134,7 @@ export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
             </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       <div className="flex justify-center items-center gap-4 mt-8">
         <button
