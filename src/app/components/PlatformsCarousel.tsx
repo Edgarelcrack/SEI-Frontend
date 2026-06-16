@@ -2,13 +2,13 @@ import { useRef, useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SoftwareCard } from "./SoftwareCard";
-import type { Software } from "../data/software";
+import type { SoftwareListItem } from "../services/software";
 
 const SWIPE_OFFSET = 60;
 const SWIPE_VELOCITY = 400;
 
 interface PlatformsCarouselProps {
-  items: Software[];
+  items: SoftwareListItem[];
 }
 
 export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
@@ -110,18 +110,22 @@ export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
                 ) : (
                   <div className="pointer-events-none rounded-3xl overflow-hidden border dark:border-white/10 border-black/10 dark:bg-[#0a0a0a] bg-zinc-100">
                     <div className="relative w-full aspect-[4/5] overflow-hidden">
-                      <img
-                        src={item.thumbnail}
-                        alt={item.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                        draggable={false}
-                      />
+                      {item.thumbnail_url ? (
+                        <img
+                          src={item.thumbnail_url}
+                          alt={item.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                          draggable={false}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-[#1B56D2]/20 to-[#1B56D2]/5" />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-6">
                         <div className="text-xs font-bold tracking-widest uppercase text-white/70 mb-2">
-                          {item.category}
+                          {item.tags[0]?.name ?? "Software"}
                         </div>
                         <div className="text-2xl font-black tracking-tighter uppercase text-white">
                           {item.name}

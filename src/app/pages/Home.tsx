@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
 import { motion, useScroll, useTransform } from "motion/react";
@@ -8,14 +9,39 @@ import { PageTitle } from "../components/PageTitle";
 import { CountUp } from "../components/CountUp";
 import { RevealText } from "../components/RevealText";
 import { HowWeWork } from "../components/HowWeWork";
-import { softwareData } from "../data/software";
-
-const featuredPlatform = softwareData.find((s) => s.featured) ?? softwareData[0];
-const otherPlatforms = softwareData.filter((s) => s.id !== featuredPlatform?.id);
+import { listSoftware, type SoftwareListItem } from "../services/software";
 
 export function Home() {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [0, -300]);
+
+  const [featuredPlatform, setFeaturedPlatform] = useState<SoftwareListItem | null>(null);
+  const [otherPlatforms, setOtherPlatforms] = useState<SoftwareListItem[]>([]);
+  const [loadingPlatforms, setLoadingPlatforms] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    listSoftware({ limit: 12, sort: "created_desc" })
+      .then((res) => {
+        if (cancelled) return;
+        const items = res.data;
+        const featured = items.find((s) => s.is_featured) ?? items[0] ?? null;
+        setFeaturedPlatform(featured);
+        setOtherPlatforms(featured ? items.filter((s) => s.id !== featured.id) : []);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setFeaturedPlatform(null);
+          setOtherPlatforms([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingPlatforms(false);
+      });
+
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div className="bg-background min-h-screen text-foreground overflow-hidden transition-colors duration-300">
@@ -163,7 +189,13 @@ export function Home() {
             </Link>
           </div>
 
-          {featuredPlatform && <FeaturedPlatform software={featuredPlatform} />}
+          {loadingPlatforms ? (
+            <div className="flex items-center justify-center py-32">
+              <div className="w-10 h-10 rounded-full border-2 border-[#1B56D2] border-t-transparent animate-spin" />
+            </div>
+          ) : (
+            featuredPlatform && <FeaturedPlatform software={featuredPlatform} />
+          )}
         </div>
       </section>
 

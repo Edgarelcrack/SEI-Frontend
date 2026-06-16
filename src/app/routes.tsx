@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { ComponentType, lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 import { Root } from "./pages/Root";
 
@@ -6,6 +6,8 @@ const Home = lazy(() => import("./pages/Home").then(m => ({ default: m.Home })))
 const Services = lazy(() => import("./pages/Services").then(m => ({ default: m.Services })));
 const Platforms = lazy(() => import("./pages/Platforms").then(m => ({ default: m.Platforms })));
 const SoftwareDetail = lazy(() => import("./pages/SoftwareDetail").then(m => ({ default: m.SoftwareDetail })));
+const Hardware = lazy(() => import("./pages/Hardware").then(m => ({ default: m.Hardware })));
+const HardwareDetail = lazy(() => import("./pages/HardwareDetail").then(m => ({ default: m.HardwareDetail })));
 const Privacy = lazy(() => import("./pages/Privacy").then(m => ({ default: m.Privacy })));
 const Terms = lazy(() => import("./pages/Terms").then(m => ({ default: m.Terms })));
 const NotFound = lazy(() => import("./pages/NotFound").then(m => ({ default: m.NotFound })));
@@ -32,7 +34,9 @@ export const router = createBrowserRouter([
       { index: true, Component: withSuspense(Home) },
       { path: "services", Component: withSuspense(Services) },
       { path: "platforms", Component: withSuspense(Platforms) },
-      { path: "software/:id", Component: withSuspense(SoftwareDetail) },
+      { path: "software/:slug", Component: withSuspense(SoftwareDetail) },
+      { path: "hardware", Component: withSuspense(Hardware) },
+      { path: "hardware/:slug", Component: withSuspense(HardwareDetail) },
       { path: "privacidad", Component: withSuspense(Privacy) },
       { path: "terminos", Component: withSuspense(Terms) },
       { path: "*", Component: withSuspense(NotFound) },

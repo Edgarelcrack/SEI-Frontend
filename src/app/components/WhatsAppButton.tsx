@@ -1,17 +1,38 @@
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
-import { getSoftwareById } from "../data/software";
+import { getSoftwareBySlug } from "../services/software";
+import { getHardwareBySlug } from "../services/hardware";
 
 const WHATSAPP_NUMBER = "573127824123";
 const WHATSAPP_MESSAGE = "Hola SEI, estoy interesado en sus servicios de software. ¿Podrían brindarme más información?";
 
 export function WhatsAppButton() {
   const { pathname } = useLocation();
+  const [productName, setProductName] = useState<string | null>(null);
 
-  // En la página de una plataforma, el mensaje llega prellenado con su nombre.
-  const match = pathname.match(/^\/software\/([^/]+)/);
-  const software = match ? getSoftwareById(decodeURIComponent(match[1])) : undefined;
-  const message = software
-    ? `Hola SEI, estoy interesado en la plataforma ${software.name}. ¿Podrían brindarme más información?`
+  // En la página de un producto, el mensaje llega prellenado con su nombre.
+  useEffect(() => {
+    const softwareMatch = pathname.match(/^\/software\/([^/]+)/);
+    const hardwareMatch = pathname.match(/^\/hardware\/([^/]+)/);
+
+    if (!softwareMatch && !hardwareMatch) {
+      setProductName(null);
+      return;
+    }
+
+    let cancelled = false;
+    const slug = decodeURIComponent((softwareMatch ?? hardwareMatch)![1]);
+    const request = softwareMatch ? getSoftwareBySlug(slug) : getHardwareBySlug(slug);
+
+    request
+      .then((res) => { if (!cancelled) setProductName(res.data.name); })
+      .catch(() => { if (!cancelled) setProductName(null); });
+
+    return () => { cancelled = true; };
+  }, [pathname]);
+
+  const message = productName
+    ? `Hola SEI, estoy interesado en ${productName}. ¿Podrían brindarme más información?`
     : WHATSAPP_MESSAGE;
 
   const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -22,8 +43,8 @@ export function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={
-        software
-          ? `Chatea por WhatsApp sobre ${software.name}`
+        productName
+          ? `Chatea por WhatsApp sobre ${productName}`
           : "Chatea con nosotros por WhatsApp"
       }
       className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/20 transition-transform duration-300 hover:scale-110 hover:shadow-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/40"

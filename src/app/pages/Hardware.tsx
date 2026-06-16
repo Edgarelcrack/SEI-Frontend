@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ArrowUpDown, Check, Filter, Search, X } from "lucide-react";
 import { Link } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { SoftwareCard } from "../components/SoftwareCard";
+import { HardwareCard } from "../components/HardwareCard";
 import { PageTitle } from "../components/PageTitle";
-import { listSoftware, type SoftwareListItem } from "../services/software";
+import { listHardware, type HardwareListItem } from "../services/hardware";
 import { listTags, type Tag } from "../services/tags";
 
 type SortMode = "created_desc" | "name_asc" | "views";
@@ -17,8 +17,8 @@ const SORT_LABELS: Record<SortMode, string> = {
 
 const SORT_MODES: SortMode[] = ["created_desc", "name_asc", "views"];
 
-export function Platforms() {
-  const [items, setItems] = useState<SoftwareListItem[]>([]);
+export function Hardware() {
+  const [items, setItems] = useState<HardwareListItem[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtering, setFiltering] = useState(false);
@@ -45,26 +45,23 @@ export function Platforms() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Cargar tags de software una sola vez
   useEffect(() => {
-    listTags("software")
+    listTags("hardware")
       .then((res) => setTags(res.data))
       .catch(() => setTags([]));
   }, []);
 
-  // Fetch inicial
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
 
-    listSoftware({ limit: 100 })
+    listHardware({ limit: 100 })
       .then((res) => {
         if (!cancelled) {
           setItems(res.data);
@@ -81,14 +78,13 @@ export function Platforms() {
     return () => { cancelled = true; };
   }, []);
 
-  // Re-fetch al cambiar filtros (tras carga inicial)
   useEffect(() => {
     if (loading) return;
 
     let cancelled = false;
     setFiltering(true);
 
-    listSoftware({
+    listHardware({
       q: debouncedSearch || undefined,
       tags: selectedTags.length > 0 ? selectedTags.join(",") : undefined,
       sort: sortMode,
@@ -101,9 +97,7 @@ export function Platforms() {
           setError(null);
         }
       })
-      .catch(() => {
-        // En error de filtro conserva resultados anteriores
-      })
+      .catch(() => {})
       .finally(() => {
         if (!cancelled) setFiltering(false);
       });
@@ -112,8 +106,7 @@ export function Platforms() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, selectedTags, sortMode]);
 
-  const activeFilterCount =
-    (searchQuery.trim() ? 1 : 0) + selectedTags.length;
+  const activeFilterCount = (searchQuery.trim() ? 1 : 0) + selectedTags.length;
 
   function toggleTag(slug: string) {
     setSelectedTags((prev) =>
@@ -129,14 +122,14 @@ export function Platforms() {
   return (
     <div className="bg-background min-h-screen text-foreground transition-colors duration-300">
       <PageTitle
-        title="Plataformas"
-        description="Explora nuestro catálogo de plataformas y soluciones de software a medida. Filtra por categoría y tecnología."
+        title="Hardware & Equipos"
+        description="Explora nuestro catálogo de equipos y soluciones de hardware. Filtra por marca y categoría."
       />
       <section className="relative px-6 lg:px-12 z-10 pt-32 pb-16">
         <div className="max-w-[1400px] w-full mx-auto">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-zinc-500 hover:text-[#1B56D2] transition-colors mb-12"
+            className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-zinc-500 hover:text-[#E31E24] transition-colors mb-12"
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
             Volver al Inicio
@@ -149,7 +142,7 @@ export function Platforms() {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase"
             >
-              TODAS LAS
+              TODOS LOS
             </motion.h1>
           </div>
           <div className="overflow-hidden mb-12">
@@ -158,9 +151,9 @@ export function Platforms() {
               animate={{ y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
               className="text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase text-background"
-              style={{ WebkitTextStroke: "6px #E31E24", paintOrder: "stroke fill" }}
+              style={{ WebkitTextStroke: "6px #1B56D2", paintOrder: "stroke fill" }}
             >
-              PLATAFORMAS.
+              EQUIPOS.
             </motion.h1>
           </div>
 
@@ -170,8 +163,8 @@ export function Platforms() {
             transition={{ duration: 1, delay: 0.4 }}
             className="text-xl md:text-2xl font-light text-zinc-500 max-w-2xl leading-relaxed tracking-tight border-t dark:border-white/10 border-black/10 pt-10 mt-10"
           >
-            El catálogo completo de nuestras arquitecturas listas para producción.
-            Cada plataforma está diseñada para escalar contigo.
+            Hardware seleccionado para rendimiento empresarial.
+            Equipos y dispositivos listos para integrar con nuestras plataformas.
           </motion.p>
         </div>
       </section>
@@ -186,12 +179,12 @@ export function Platforms() {
                   setFilterOpen((o) => !o);
                   setSortOpen(false);
                 }}
-                className="group inline-flex items-center gap-3 px-6 h-14 rounded-full dark:border-white/20 border-black/20 border text-sm font-black tracking-widest uppercase hover:border-[#1B56D2] transition-colors duration-300 dark:bg-black bg-white"
+                className="group inline-flex items-center gap-3 px-6 h-14 rounded-full dark:border-white/20 border-black/20 border text-sm font-black tracking-widest uppercase hover:border-[#E31E24] transition-colors duration-300 dark:bg-black bg-white"
               >
                 <Filter className="w-4 h-4" />
                 Filtrar
                 {activeFilterCount > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full bg-[#1B56D2] text-white text-xs font-black">
+                  <span className="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full bg-[#E31E24] text-white text-xs font-black">
                     {activeFilterCount}
                   </span>
                 )}
@@ -232,8 +225,8 @@ export function Platforms() {
                           type="text"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          placeholder="Buscar plataforma..."
-                          className="w-full h-11 pl-11 pr-4 rounded-full dark:border-white/15 border-black/15 border dark:bg-black bg-white text-sm focus:outline-none focus:border-[#1B56D2] transition-colors"
+                          placeholder="Buscar equipo..."
+                          className="w-full h-11 pl-11 pr-4 rounded-full dark:border-white/15 border-black/15 border dark:bg-black bg-white text-sm focus:outline-none focus:border-[#E31E24] transition-colors"
                         />
                       </div>
                     </div>
@@ -253,8 +246,8 @@ export function Platforms() {
                                 onClick={() => toggleTag(tag.slug)}
                                 className={`inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-xs font-bold tracking-wide transition-colors duration-200 ${
                                   active
-                                    ? "bg-[#1B56D2] text-white border border-[#1B56D2]"
-                                    : "dark:border-white/20 border-black/20 border dark:text-white text-zinc-900 hover:border-[#1B56D2]"
+                                    ? "bg-[#E31E24] text-white border border-[#E31E24]"
+                                    : "dark:border-white/20 border-black/20 border dark:text-white text-zinc-900 hover:border-[#E31E24]"
                                 }`}
                               >
                                 {active && <Check className="w-3 h-3" />}
@@ -277,11 +270,11 @@ export function Platforms() {
                   setSortOpen((o) => !o);
                   setFilterOpen(false);
                 }}
-                className="group inline-flex items-center gap-3 px-6 h-14 rounded-full dark:border-white/20 border-black/20 border text-sm font-black tracking-widest uppercase hover:border-[#1B56D2] transition-colors duration-300 dark:bg-black bg-white"
+                className="group inline-flex items-center gap-3 px-6 h-14 rounded-full dark:border-white/20 border-black/20 border text-sm font-black tracking-widest uppercase hover:border-[#E31E24] transition-colors duration-300 dark:bg-black bg-white"
               >
                 <ArrowUpDown className="w-4 h-4" />
                 <span className="hidden sm:inline">Ordenar:&nbsp;</span>
-                <span className="text-[#1B56D2]">{SORT_LABELS[sortMode]}</span>
+                <span className="text-[#E31E24]">{SORT_LABELS[sortMode]}</span>
               </button>
 
               <AnimatePresence>
@@ -305,7 +298,7 @@ export function Platforms() {
                           }}
                           className={`w-full flex items-center justify-between px-4 h-11 rounded-full text-sm font-bold tracking-wide transition-colors duration-200 ${
                             active
-                              ? "bg-[#1B56D2] text-white"
+                              ? "bg-[#E31E24] text-white"
                               : "dark:text-white text-zinc-900 dark:hover:bg-white/5 hover:bg-black/5"
                           }`}
                         >
@@ -321,7 +314,7 @@ export function Platforms() {
 
             <div className="ml-auto text-xs font-bold tracking-widest uppercase text-zinc-500">
               {filtering ? (
-                <div className="w-4 h-4 rounded-full border-2 border-[#1B56D2] border-t-transparent animate-spin" />
+                <div className="w-4 h-4 rounded-full border-2 border-[#E31E24] border-t-transparent animate-spin" />
               ) : (
                 <>
                   {total}{" "}
@@ -337,7 +330,7 @@ export function Platforms() {
         <div className="max-w-[1400px] w-full mx-auto">
           {loading ? (
             <div className="flex items-center justify-center py-32">
-              <div className="w-10 h-10 rounded-full border-2 border-[#1B56D2] border-t-transparent animate-spin" />
+              <div className="w-10 h-10 rounded-full border-2 border-[#E31E24] border-t-transparent animate-spin" />
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-32 text-center">
@@ -352,12 +345,12 @@ export function Platforms() {
                 Sin resultados
               </div>
               <p className="text-base text-zinc-500 mb-8 max-w-md">
-                No encontramos plataformas con los filtros seleccionados.
+                No encontramos equipos con los filtros seleccionados.
               </p>
               <button
                 type="button"
                 onClick={clearFilters}
-                className="inline-flex items-center gap-2 px-6 h-12 rounded-full bg-[#1B56D2] text-white text-sm font-black tracking-widest uppercase hover:opacity-90 transition-opacity"
+                className="inline-flex items-center gap-2 px-6 h-12 rounded-full bg-[#E31E24] text-white text-sm font-black tracking-widest uppercase hover:opacity-90 transition-opacity"
               >
                 <X className="w-4 h-4" />
                 Limpiar filtros
@@ -369,9 +362,9 @@ export function Platforms() {
               className={`grid grid-cols-1 md:grid-cols-2 gap-12 transition-opacity duration-300 ${filtering ? "opacity-60" : "opacity-100"}`}
             >
               <AnimatePresence mode="popLayout">
-                {items.map((software, index) => (
+                {items.map((hardware, index) => (
                   <motion.div
-                    key={software.id}
+                    key={hardware.id}
                     layout
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -382,7 +375,7 @@ export function Platforms() {
                       ease: [0.16, 1, 0.3, 1],
                     }}
                   >
-                    <SoftwareCard software={software} />
+                    <HardwareCard hardware={hardware} />
                   </motion.div>
                 ))}
               </AnimatePresence>

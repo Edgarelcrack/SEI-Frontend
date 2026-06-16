@@ -35,7 +35,8 @@ export function Header() {
   const navItems = [
     { name: "INICIO", path: "/" },
     { name: "PLATAFORMAS", path: "/platforms" },
-    { name: "SERVICIOS", path: "/services" }
+    { name: "HARDWARE", path: "/hardware" },
+    { name: "SERVICIOS", path: "/services" },
   ];
 
   const isActive = (path: string) => {
