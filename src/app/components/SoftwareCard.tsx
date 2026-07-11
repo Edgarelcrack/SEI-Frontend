@@ -1,9 +1,10 @@
 import { memo, useRef } from "react";
 import { Link } from "react-router";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Check, Loader2, ShoppingBag } from "lucide-react";
 import { TiltCard } from "./TiltCard";
 import { formatPrice } from "../services/api";
 import type { SoftwareListItem } from "../services/software";
+import { useCart } from "../context/CartContext";
 
 interface SoftwareCardProps {
   software: SoftwareListItem;
@@ -11,6 +12,12 @@ interface SoftwareCardProps {
 
 function SoftwareCardImpl({ software }: SoftwareCardProps) {
   const ref = useRef<HTMLAnchorElement>(null);
+  const { addItem, addingId, cart } = useCart();
+
+  const adding = addingId === software.id;
+  const inCart = cart?.items.some(
+    (it) => it.item_type === "software" && it.item_id === software.id,
+  ) ?? false;
 
   function handleMouseMove(e: React.MouseEvent<HTMLAnchorElement>) {
     const el = ref.current;
@@ -18,6 +25,13 @@ function SoftwareCardImpl({ software }: SoftwareCardProps) {
     const rect = el.getBoundingClientRect();
     el.style.setProperty("--spot-x", `${e.clientX - rect.left}px`);
     el.style.setProperty("--spot-y", `${e.clientY - rect.top}px`);
+  }
+
+  function handleAddToCart(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (adding) return;
+    addItem("software", software.id);
   }
 
   const categoryLabel = software.tags[0]?.name ?? "Software";
@@ -109,6 +123,31 @@ function SoftwareCardImpl({ software }: SoftwareCardProps) {
                 </div>
               )}
             </div>
+
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={adding}
+              className={`relative z-20 flex items-center justify-center gap-3 w-full h-14 rounded-full font-black tracking-widest uppercase text-sm transition-colors duration-300 disabled:cursor-not-allowed ${
+                inCart
+                  ? "bg-[#1B56D2]/10 text-[#1B56D2] border border-[#1B56D2]/30"
+                  : "bg-[#1B56D2] text-white hover:bg-[#E31E24]"
+              }`}
+            >
+              {adding ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : inCart ? (
+                <>
+                  <Check className="w-5 h-5" />
+                  En el carrito
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-5 h-5" />
+                  Agregar al carrito
+                </>
+              )}
+            </button>
           </div>
         </div>
       </Link>

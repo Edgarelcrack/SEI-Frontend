@@ -9,8 +9,8 @@ export class ApiError extends Error {
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
     ...init,
+    headers: { 'Content-Type': 'application/json', ...init?.headers },
   })
 
   if (!res.ok) {
@@ -23,6 +23,32 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
 
 export function buildAdminHeaders(token: string): HeadersInit {
   return { Authorization: `Bearer ${token}` }
+}
+
+/**
+ * Normaliza una URL de YouTube al formato embebible (`/embed/VIDEO_ID`).
+ * Acepta `watch?v=`, `youtu.be/`, `shorts/` o un embed ya válido.
+ * Devuelve la URL original si no se reconoce.
+ */
+export function toYouTubeEmbed(url: string): string {
+  if (!url) return url
+  if (url.includes('/embed/')) return url
+
+  let id = ''
+  try {
+    const u = new URL(url)
+    const host = u.hostname.replace(/^www\./, '')
+    if (host === 'youtu.be') {
+      id = u.pathname.slice(1)
+    } else if (host === 'youtube.com' || host === 'm.youtube.com') {
+      if (u.pathname === '/watch') id = u.searchParams.get('v') ?? ''
+      else if (u.pathname.startsWith('/shorts/')) id = u.pathname.split('/')[2] ?? ''
+    }
+  } catch {
+    return url
+  }
+
+  return id ? `https://www.youtube.com/embed/${id}` : url
 }
 
 export function formatPrice(

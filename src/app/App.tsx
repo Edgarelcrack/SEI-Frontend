@@ -2,6 +2,8 @@ import { useState } from "react";
 import { RouterProvider } from "react-router";
 import { router } from "./routes";
 import { ThemeProvider } from "./context/ThemeContext";
+import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext";
 import { Preloader } from "./components/Preloader";
 
 function shouldSkipPreloader(): boolean {
@@ -21,13 +23,17 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      {appReady && <RouterProvider router={router} />}
-      {!preloaderDone && (
-        <Preloader
-          onReveal={() => setAppReady(true)}
-          onComplete={() => setPreloaderDone(true)}
-        />
-      )}
+      <AuthProvider>
+        <CartProvider>
+          {appReady && <RouterProvider router={router} />}
+          {!preloaderDone && (
+            <Preloader
+              onReveal={() => setAppReady(true)}
+              onComplete={() => setPreloaderDone(true)}
+            />
+          )}
+        </CartProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

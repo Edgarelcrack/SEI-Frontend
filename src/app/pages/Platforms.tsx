@@ -45,7 +45,6 @@ export function Platforms() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
     return () => clearTimeout(timer);

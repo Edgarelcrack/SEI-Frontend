@@ -4,6 +4,7 @@ import { PageTransition } from "../components/PageTransition";
 import { ScrollProgress } from "../components/ScrollProgress";
 import { WhatsAppButton } from "../components/WhatsAppButton";
 import { CustomCursor } from "../components/CustomCursor";
+import { CartDrawer } from "../components/CartDrawer";
 import { useTheme } from "../context/ThemeContext";
 
 export function Root() {
@@ -17,6 +18,7 @@ export function Root() {
       </main>
       <Footer />
       <WhatsAppButton />
+      <CartDrawer />
       <CustomCursor />
     </div>
   );

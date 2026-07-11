@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, Navigate } from "react-router";
-import { ArrowLeft, ArrowUpRight, ExternalLink, Check, Server, Lock, TrendingUp, Plug, Code2, Cpu } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, ExternalLink, Check, Server, Lock, TrendingUp, Plug, Code2, Cpu, Loader2, ShoppingBag } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { PageTitle } from "../components/PageTitle";
 import { getSoftwareBySlug, type SoftwareDetail as SoftwareDetailType } from "../services/software";
-import { ApiError, formatPrice } from "../services/api";
+import { ApiError, formatPrice, toYouTubeEmbed } from "../services/api";
+import { useCart } from "../context/CartContext";
 
 export function SoftwareDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [software, setSoftware] = useState<SoftwareDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const { addItem, addingId, cart } = useCart();
 
   const { scrollYProgress } = useScroll();
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 300]);
@@ -45,9 +47,15 @@ export function SoftwareDetail() {
     software.images[0]?.url ??
     null;
 
-  const videoUrl = software.video_urls?.[0] ?? null;
+  const rawVideoUrl = software.video_urls?.[0] ?? null;
+  const videoUrl = rawVideoUrl ? toYouTubeEmbed(rawVideoUrl) : null;
   const priceLabel = formatPrice(software.price_model, software.price_min, software.price_max);
   const categoryLabel = software.tags[0]?.name ?? "Software";
+
+  const adding = addingId === software.id;
+  const inCart = cart?.items.some(
+    (it) => it.item_type === "software" && it.item_id === software.id,
+  ) ?? false;
 
   return (
     <div className="bg-background min-h-screen text-foreground pb-32 font-sans transition-colors duration-300">
@@ -357,11 +365,29 @@ export function SoftwareDetail() {
                 <div className="relative z-10">
                   <h3 className="text-2xl font-black tracking-tighter uppercase mb-4">¿LISTO PARA DESPLEGAR?</h3>
                   <p className="text-sm font-light text-zinc-500 leading-relaxed mb-8">
-                    Contacta con ingeniería para revisar la arquitectura y los tiempos de despliegue.
+                    Agrega esta plataforma a tu cotización o contacta con ingeniería para revisar la arquitectura.
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => { if (!adding) addItem("software", software.id); }}
+                    disabled={adding}
+                    className={`flex items-center justify-center gap-3 w-full h-14 rounded-full font-black tracking-widest uppercase transition-colors mb-4 disabled:cursor-not-allowed ${
+                      inCart
+                        ? "bg-[#1B56D2]/10 text-[#1B56D2] border border-[#1B56D2]/30"
+                        : "bg-[#1B56D2] text-white hover:bg-[#E31E24]"
+                    }`}
+                  >
+                    {adding ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : inCart ? (
+                      <><Check className="w-5 h-5" /> EN EL CARRITO</>
+                    ) : (
+                      <><ShoppingBag className="w-5 h-5" /> AGREGAR AL CARRITO</>
+                    )}
+                  </button>
                   <Link
                     to="/services"
-                    className="flex items-center justify-center gap-3 w-full h-14 rounded-full bg-[#1B56D2] text-white font-black tracking-widest uppercase hover:bg-[#E31E24] transition-colors"
+                    className="flex items-center justify-center gap-3 w-full h-14 rounded-full dark:bg-white/5 bg-black/5 dark:text-white text-zinc-900 font-black tracking-widest uppercase dark:hover:bg-white/10 hover:bg-black/10 transition-colors"
                   >
                     CONSULTA
                   </Link>

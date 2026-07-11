@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, Navigate } from "react-router";
-import { ArrowLeft, ArrowUpRight, Package } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Check, Loader2, Package, ShoppingBag } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { PageTitle } from "../components/PageTitle";
 import { getHardwareBySlug, type HardwareDetail as HardwareDetailType } from "../services/hardware";
 import { ApiError, formatPrice } from "../services/api";
+import { useCart } from "../context/CartContext";
 
 export function HardwareDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [hardware, setHardware] = useState<HardwareDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const { addItem, addingId, cart } = useCart();
 
   const { scrollYProgress } = useScroll();
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 300]);
@@ -47,6 +49,11 @@ export function HardwareDetail() {
 
   const priceLabel = formatPrice(hardware.price_model, hardware.price_min, hardware.price_max);
   const categoryLabel = hardware.brand ?? hardware.tags[0]?.name ?? "Hardware";
+
+  const adding = addingId === hardware.id;
+  const inCart = cart?.items.some(
+    (it) => it.item_type === "hardware" && it.item_id === hardware.id,
+  ) ?? false;
 
   const specs = hardware.specifications as Record<string, string> | null;
   const specEntries = specs ? Object.entries(specs) : [];
@@ -286,11 +293,29 @@ export function HardwareDetail() {
                 <div className="relative z-10">
                   <h3 className="text-2xl font-black tracking-tighter uppercase mb-4">¿INTERESADO?</h3>
                   <p className="text-sm font-light text-zinc-500 leading-relaxed mb-8">
-                    Contáctanos para recibir una cotización personalizada y asesoría técnica.
+                    Agrega este equipo a tu cotización o contáctanos para recibir asesoría técnica.
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => { if (!adding) addItem("hardware", hardware.id); }}
+                    disabled={adding}
+                    className={`flex items-center justify-center gap-3 w-full h-14 rounded-full font-black tracking-widest uppercase transition-colors mb-4 disabled:cursor-not-allowed ${
+                      inCart
+                        ? "bg-[#E31E24]/10 text-[#E31E24] border border-[#E31E24]/30"
+                        : "bg-[#E31E24] text-white hover:bg-[#1B56D2]"
+                    }`}
+                  >
+                    {adding ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : inCart ? (
+                      <><Check className="w-5 h-5" /> EN EL CARRITO</>
+                    ) : (
+                      <><ShoppingBag className="w-5 h-5" /> AGREGAR AL CARRITO</>
+                    )}
+                  </button>
                   <Link
                     to="/services"
-                    className="flex items-center justify-center gap-3 w-full h-14 rounded-full bg-[#E31E24] text-white font-black tracking-widest uppercase hover:bg-[#1B56D2] transition-colors"
+                    className="flex items-center justify-center gap-3 w-full h-14 rounded-full dark:bg-white/5 bg-black/5 dark:text-white text-zinc-900 font-black tracking-widest uppercase dark:hover:bg-white/10 hover:bg-black/10 transition-colors"
                   >
                     COTIZAR
                   </Link>

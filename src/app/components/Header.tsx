@@ -1,13 +1,15 @@
 import { Link, useLocation } from "react-router";
-import { Menu, X, ArrowUpRight, Sun, Moon } from "lucide-react";
+import { Menu, X, ArrowUpRight, Sun, Moon, ShoppingBag } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "../context/ThemeContext";
+import { useCart } from "../context/CartContext";
 import logoUrl from "../../imports/Logo-SEI-250px.png";
 
 export function Header() {
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
+  const { itemCount, toggleCart } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -54,14 +56,38 @@ export function Header() {
             : "bg-transparent border-transparent"
         }`}
       >
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <img
-            src={logoUrl}
-            alt="SEI Logo"
-            className="h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
-          />
-        </Link>
+        {/* Logo + carrito */}
+        <div className="flex items-center gap-3 md:gap-4">
+          <Link to="/" className="flex items-center gap-2 group">
+            <img
+              src={logoUrl}
+              alt="SEI Logo"
+              className="h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+            />
+          </Link>
+
+          <motion.button
+            onClick={toggleCart}
+            whileTap={{ scale: 0.9 }}
+            className="relative p-2.5 rounded-full border dark:border-white/20 border-black/20 dark:text-zinc-300 text-zinc-600 hover:border-[#E31E24] hover:text-[#E31E24] transition-all duration-300"
+            aria-label="Abrir carrito"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            <AnimatePresence>
+              {itemCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                  className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full bg-[#E31E24] text-white text-[10px] font-black flex items-center justify-center"
+                >
+                  {itemCount}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
