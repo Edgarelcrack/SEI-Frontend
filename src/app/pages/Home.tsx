@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion } from "motion/react";
 import { PlatformsCarousel } from "../components/PlatformsCarousel";
 import { FeaturedPlatform } from "../components/FeaturedPlatform";
 import { Magnetic } from "../components/Magnetic";
@@ -12,8 +12,32 @@ import { HowWeWork } from "../components/HowWeWork";
 import { listSoftware, type SoftwareListItem } from "../services/software";
 
 export function Home() {
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -300]);
+
+  /*
+   * El marquee es la única animación CSS que queda en la Home, y se pausa
+   * mientras está fuera de pantalla: una animación infinita mantiene despierto
+   * el bucle de repintado del navegador aunque no haya nada visible que
+   * mostrar. Es transform puro, así que se compone en GPU.
+   *
+   * Se escribe sobre el nodo directamente en lugar de usar estado: entrar y
+   * salir de pantalla no debe provocar un render del árbol de la Home.
+   */
+  const marqueeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = marqueeRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        el.style.animationPlayState = entry.isIntersecting ? "running" : "paused";
+      },
+      { rootMargin: "200px" },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const [featuredPlatform, setFeaturedPlatform] = useState<SoftwareListItem | null>(null);
   const [otherPlatforms, setOtherPlatforms] = useState<SoftwareListItem[]>([]);
@@ -49,25 +73,38 @@ export function Home() {
         title="Desarrollo de software a medida"
         description="Diseñamos productos digitales escalables, brutalistas y ultramodernos. Ingeniería de software de alto rendimiento para marcas con ambición."
       />
-      {/* Dynamic Background */}
+      {/*
+        Fondo. Es una capa fija a pantalla completa y ahora es completamente
+        estática, así que el navegador la rasteriza una vez y no vuelve a
+        tocarla. Antes el halo llevaba un parallax ligado al scroll: eso
+        obligaba a recomponer el viewport entero en cada fotograma al bajar
+        por la página, a cambio de un desplazamiento que apenas se percibía
+        en un degradado al 8 % de opacidad efectiva.
+
+        Por el mismo motivo aquí no caben `mix-blend-mode` ni `filter: blur()`.
+      */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay" />
-        <motion.div
-          style={{ y, willChange: "transform" }}
-          className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full bg-[#1B56D2] opacity-[0.04] blur-[60px] mix-blend-screen"
-        />
+        <div className="noise-overlay absolute inset-0 opacity-[0.06] dark:opacity-[0.10]" />
+        <div className="glow-blue absolute top-[20%] left-[50%] -translate-x-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] rounded-full opacity-40" />
       </div>
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex flex-col justify-center px-6 lg:px-12 z-10 pt-32 overflow-hidden">
         {/* Hero Background Image */}
         <div className="absolute inset-0 -z-10 pointer-events-none">
+          {/*
+            El desaturado y el contraste los aplica el CDN (`sat`/`con` de
+            imgix, que es lo que sirve Unsplash) en vez de un `filter` CSS.
+            Un `filter` sobre un elemento a pantalla completa crea una
+            superficie fuera de pantalla, y esta quedaba justo detrás del
+            título animado del hero. Así el navegador recibe la imagen ya
+            procesada y no hace ningún trabajo de filtrado.
+          */}
           <div
             className="absolute inset-0 bg-cover bg-center opacity-[0.18] dark:opacity-25"
             style={{
               backgroundImage:
-                "url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=70')",
-              filter: "grayscale(40%) contrast(110%)",
+                "url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=70&sat=-40&con=10')",
             }}
           />
           <div className="absolute inset-0 dark:bg-gradient-to-b dark:from-black/40 dark:via-black/60 dark:to-background bg-gradient-to-b from-white/40 via-white/70 to-background" />
@@ -88,11 +125,26 @@ export function Home() {
             </motion.h1>
           </div>
           <div className="overflow-hidden mb-12">
+            {/*
+              Degradado estático que recorre las letras: S azul, E en la mezcla,
+              I y punto rojos.
+
+              `inline-block` es imprescindible. Con `background-clip: text` el
+              degradado se reparte sobre la caja del elemento, no sobre los
+              glifos; como bloque, el h1 ocupaba todo el ancho del contenedor y
+              el texto solo mostraba una franja estrecha, de ahí que se viera de
+              un color plano. Ajustando la caja al texto, el degradado empieza
+              en la S y termina en el punto.
+
+              Las paradas al 10 % y 90 % reservan los extremos para que la S
+              salga azul limpia y el punto rojo limpio, y concentran la mezcla
+              en el centro, que es donde cae la E.
+            */}
             <motion.h1
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase bg-gradient-to-r from-[#1B56D2] via-[#E31E24] to-[#1B56D2] bg-[length:200%_auto] bg-clip-text text-transparent animate-gradient"
+              className="inline-block text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase bg-gradient-to-r from-[#1B56D2] from-10% to-[#E31E24] to-90% bg-clip-text text-transparent"
             >
               SEI.
             </motion.h1>
@@ -125,11 +177,21 @@ export function Home() {
         </div>
       </section>
 
-      {/* Infinite Marquee */}
-      <section className="relative z-10 py-12 bg-[#1B56D2] text-white overflow-hidden flex items-center border-y dark:border-black/30 border-[#1B56D2]">
-        <div className="animate-marquee flex whitespace-nowrap text-5xl md:text-7xl font-black tracking-tighter uppercase">
+      {/*
+        Infinite Marquee. El grosor de la franja sale de `py-*` (relleno) y
+        `text-*` (cuerpo de letra); son las dos perillas para ajustarlo.
+        Además de estética, el cuerpo de letra fija el tamaño de la capa que
+        el compositor mueve en cada fotograma: como el contenido va duplicado
+        para que el bucle no tenga costura, la capa mide el doble de ancho que
+        el texto, así que reducirlo encoge la superficie en ambos ejes.
+      */}
+      <section className="relative z-10 py-5 md:py-7 bg-[#1B56D2] text-white overflow-hidden flex items-center border-y dark:border-black/30 border-[#1B56D2]">
+        <div
+          ref={marqueeRef}
+          className="animate-marquee flex whitespace-nowrap text-3xl md:text-5xl font-black tracking-tighter uppercase"
+        >
           {[0, 1].map((i) => (
-            <div key={i} aria-hidden={i > 0} className="flex items-center gap-12 px-6">
+            <div key={i} aria-hidden={i > 0} className="flex items-center gap-10 px-5">
               <span>INGENIERÍA</span>
               <span className="text-white/30">✦</span>
               <span>DISEÑO</span>
@@ -251,7 +313,7 @@ export function Home() {
       {/* Outro CTA */}
       <section className="cv-auto py-40 px-6 lg:px-12 relative z-10 dark:border-white/10 border-black/10 border-t dark:bg-[#0a0a0a] bg-zinc-100 overflow-hidden transition-colors duration-300">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-[#1B56D2]/5 blur-[80px] rounded-full" />
+          <div className="glow-blue absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] rounded-full opacity-60" />
         </div>
 
         <div className="max-w-[1400px] w-full mx-auto flex flex-col items-center text-center relative z-10">

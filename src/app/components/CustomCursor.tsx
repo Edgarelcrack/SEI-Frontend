@@ -14,6 +14,11 @@ const ringVariants = {
  * Cursor brutalista: punto que sigue directo + anillo con retraso elástico.
  * Crece sobre enlaces y se convierte en un disco "VER" sobre las cards
  * marcadas con data-cursor="ver". Solo se activa con puntero fino (desktop).
+ *
+ * Rendimiento: aquí NO se usa `mix-blend-mode`. Un blend sobre un elemento
+ * fijo que se mueve con el ratón obliga al navegador a releer y recomponer
+ * el fondo de todo el viewport en cada evento de puntero (Firefox no tiene
+ * el atajo que sí aplica Chrome). El contraste se resuelve con el tema.
  */
 export function CustomCursor() {
   const reduce = useReducedMotion() ?? false;
@@ -64,12 +69,12 @@ export function CustomCursor() {
       {/* Anillo (sigue con retraso elástico) */}
       <motion.div
         aria-hidden="true"
-        className="fixed top-0 left-0 z-[250] pointer-events-none"
+        className="fixed top-0 left-0 z-[250] pointer-events-none will-change-transform"
         style={{ x: ringX, y: ringY }}
       >
         <motion.div
           className={`-translate-x-1/2 -translate-y-1/2 rounded-full border flex items-center justify-center ${
-            mode === "ver" ? "border-transparent" : "border-white mix-blend-difference"
+            mode === "ver" ? "border-transparent" : "dark:border-white border-zinc-900"
           }`}
           variants={ringVariants}
           initial="hidden"
@@ -89,11 +94,11 @@ export function CustomCursor() {
       {/* Punto (sigue directo, sin retraso) */}
       <motion.div
         aria-hidden="true"
-        className="fixed top-0 left-0 z-[251] pointer-events-none"
+        className="fixed top-0 left-0 z-[251] pointer-events-none will-change-transform"
         style={{ x, y }}
       >
         <motion.div
-          className="w-2 h-2 -ml-1 -mt-1 rounded-full bg-white mix-blend-difference"
+          className="w-2 h-2 -ml-1 -mt-1 rounded-full dark:bg-white bg-zinc-900"
           animate={{
             scale: mode === "ver" || mode === "hidden" ? 0 : 1,
             opacity: mode === "hidden" ? 0 : 1,

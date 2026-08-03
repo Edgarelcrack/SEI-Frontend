@@ -64,7 +64,7 @@ function HardwareCardImpl({ hardware }: HardwareCardProps) {
             <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-[#E31E24]/30 bg-[#E31E24]/5 text-[#E31E24] text-xs font-bold tracking-widest uppercase">
               {categoryLabel}
             </div>
-            <div className="w-12 h-12 rounded-full dark:bg-white/5 bg-black/5 dark:border-white/10 border-black/10 border flex items-center justify-center group-hover:bg-[#E31E24] group-hover:text-white group-hover:border-transparent group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
+            <div className="w-12 h-12 rounded-full dark:bg-white/5 bg-black/5 dark:border-white/10 border-black/10 border flex items-center justify-center group-hover:bg-[#E31E24] group-hover:text-white group-hover:border-transparent group-hover:scale-110 transition-[background-color,border-color,color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
               <ArrowUpRight className="w-5 h-5" />
             </div>
           </div>
@@ -72,12 +72,14 @@ function HardwareCardImpl({ hardware }: HardwareCardProps) {
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border dark:border-white/5 border-black/5 mb-10 shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60" />
             {hardware.thumbnail_url ? (
+              /* Ver nota en SoftwareCard: se evita `transition-all` y se acorta
+                 la transición del `filter`, que es la más cara de las tres. */
               <img
                 src={hardware.thumbnail_url}
                 alt={hardware.name}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover filter grayscale opacity-70 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
+                className="w-full h-full object-cover filter grayscale opacity-70 ease-[cubic-bezier(0.16,1,0.3,1)] [transition-property:opacity,transform,filter] [transition-duration:700ms,700ms,300ms] group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-[#E31E24]/20 to-[#E31E24]/5" />

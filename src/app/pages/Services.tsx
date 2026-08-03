@@ -99,7 +99,7 @@ function ServiceRow({ service, index }: { service: ServiceItem; index: number })
                 hidden: { opacity: 0, y: 8 },
                 visible: { opacity: 1, y: 0 },
               }}
-              className="px-3 py-1 rounded-full border dark:border-white/20 border-black/20 text-[11px] font-mono uppercase tracking-widest text-zinc-500 dark:bg-black/30 bg-white/40 backdrop-blur-sm"
+              className="px-3 py-1 rounded-full border dark:border-white/20 border-black/20 text-[11px] font-mono uppercase tracking-widest text-zinc-500 dark:bg-black/50 bg-white/70"
             >
               {t}
             </motion.span>
@@ -112,7 +112,7 @@ function ServiceRow({ service, index }: { service: ServiceItem; index: number })
         {/* Halo de respaldo que aparece al activar */}
         <div
           aria-hidden="true"
-          className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 rounded-full bg-[#1B56D2]/10 blur-[70px] transition-opacity duration-700 ${active ? "opacity-100" : "opacity-0"}`}
+          className={`glow-blue pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 rounded-full transition-opacity duration-700 ${active ? "opacity-100" : "opacity-0"}`}
         />
 
         {/* Esquema técnico */}
@@ -137,7 +137,7 @@ function ServiceRow({ service, index }: { service: ServiceItem; index: number })
 
       {/* ---------- Flecha (derecha, centrada) ---------- */}
       <div className="relative z-10 shrink-0 self-end lg:self-center">
-        <div className="w-16 h-16 rounded-full dark:border-white/20 border-black/20 border flex items-center justify-center group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-all duration-500">
+        <div className="w-16 h-16 rounded-full dark:border-white/20 border-black/20 border flex items-center justify-center group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-colors duration-500">
           <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform" />
         </div>
       </div>
@@ -286,7 +286,7 @@ export function Services() {
 
           {/* Minimalist Form */}
           <div className="dark:bg-[#0a0a0a] bg-zinc-100 p-8 md:p-16 rounded-3xl dark:border-white/10 border-black/10 border relative overflow-hidden transition-colors duration-300">
-            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#1B56D2]/5 blur-[100px] rounded-full pointer-events-none" />
+            <div className="glow-blue absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-60 pointer-events-none" />
 
             <form onSubmit={handleSubmit} className="space-y-12 relative z-10">
               <div className="space-y-8">
@@ -335,7 +335,7 @@ export function Services() {
 
               <Button
                 type="submit"
-                className="w-full h-20 rounded-full bg-[#1B56D2] text-white hover:bg-[#E31E24] text-lg font-black tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-3 group"
+                className="w-full h-20 rounded-full bg-[#1B56D2] text-white hover:bg-[#E31E24] text-lg font-black tracking-widest uppercase transition-colors duration-300 flex items-center justify-center gap-3 group"
               >
                 ENVIAR CONSULTA
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />

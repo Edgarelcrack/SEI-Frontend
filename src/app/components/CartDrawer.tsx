@@ -30,7 +30,11 @@ export function CartDrawer() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={closeCart}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+            /* Sin backdrop-blur: es un filtro a pantalla completa cuya opacidad
+               además se anima, así que el navegador reharía el desenfoque de
+               todo el viewport en cada fotograma de apertura y cierre. Bajo un
+               velo negro al 70 % el desenfoque no se percibía. */
+            className="fixed inset-0 z-[60] bg-black/70"
           />
 
           {/* Panel */}
@@ -41,7 +45,7 @@ export function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-0 right-0 z-[61] h-full w-[min(92vw,440px)] flex flex-col dark:bg-[#0a0a0a] bg-white dark:border-white/10 border-black/10 border-l shadow-2xl"
+            className="fixed top-0 right-0 z-[61] h-full w-[min(92vw,440px)] flex flex-col will-change-transform dark:bg-[#0a0a0a] bg-white dark:border-white/10 border-black/10 border-l shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-6 dark:border-white/10 border-black/10 border-b shrink-0">

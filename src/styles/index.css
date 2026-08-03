@@ -2,13 +2,26 @@
 @import './tailwind.css';
 @import './theme.css';
 
-/* Smooth scrolling for anchor links */
-html {
-  scroll-behavior: smooth;
-}
+/* Nota: `scroll-behavior: smooth` ya se declara en theme.css (capa base). */
 
-/* Defer rendering work for offscreen sections (Chromium/Edge/Safari) */
+/* Salta layout/paint de las secciones fuera de pantalla.
+   Soportado en Chromium, Safari 18+ y Firefox 125+. */
 .cv-auto {
   content-visibility: auto;
   contain-intrinsic-size: 1px 800px;
+}
+
+/*
+ * Reduced-motion se gestiona por componente con `useReducedMotion()` de Motion
+ * (Preloader, PageTransition, CustomCursor, TiltCard, RevealText,
+ * ServiceBlueprint...), que es donde se puede decidir con criterio qué se
+ * apaga y qué se deja. Aquí solo va lo que no tiene matiz posible.
+ *
+ * No poner una regla global sobre `*`: aplasta esas decisiones y congela
+ * cosas que deben seguir moviéndose, como los spinners de carga.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

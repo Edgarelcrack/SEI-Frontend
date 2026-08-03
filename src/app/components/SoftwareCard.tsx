@@ -64,7 +64,7 @@ function SoftwareCardImpl({ software }: SoftwareCardProps) {
             <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-[#1B56D2]/30 bg-[#1B56D2]/5 text-[#1B56D2] text-xs font-bold tracking-widest uppercase">
               {categoryLabel}
             </div>
-            <div className="w-12 h-12 rounded-full dark:bg-white/5 bg-black/5 dark:border-white/10 border-black/10 border flex items-center justify-center group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
+            <div className="w-12 h-12 rounded-full dark:bg-white/5 bg-black/5 dark:border-white/10 border-black/10 border flex items-center justify-center group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent group-hover:scale-110 transition-[background-color,border-color,color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
               <ArrowUpRight className="w-5 h-5" />
             </div>
           </div>
@@ -72,12 +72,19 @@ function SoftwareCardImpl({ software }: SoftwareCardProps) {
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border dark:border-white/5 border-black/5 mb-10 shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60" />
             {software.thumbnail_url ? (
+              /*
+               * `transition-all` hacía que el navegador vigilase todas las
+               * propiedades. Ahora se listan las tres que cambian, y el
+               * `filter` (lo más caro: matriz de color sobre la imagen
+               * completa en cada fotograma) se resuelve en 300 ms en vez
+               * de 700, mientras opacidad y escala mantienen el ritmo.
+               */
               <img
                 src={software.thumbnail_url}
                 alt={software.name}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover filter grayscale opacity-70 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
+                className="w-full h-full object-cover filter grayscale opacity-70 ease-[cubic-bezier(0.16,1,0.3,1)] [transition-property:opacity,transform,filter] [transition-duration:700ms,700ms,300ms] group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-[#1B56D2]/20 to-[#1B56D2]/5" />

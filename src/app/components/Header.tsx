@@ -48,11 +48,18 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 px-4 pointer-events-none">
-      <motion.div
-        layout
-        className={`pointer-events-auto w-full max-w-5xl flex items-center justify-between px-6 py-4 rounded-full border transition-all duration-500 ease-out ${
+      {/*
+        Sin `layout` (forzaba una medición con getBoundingClientRect en cada
+        render de una barra que nunca cambia de tamaño), sin `backdrop-blur`
+        (el fondo ya es opaco al 95%, así que el desenfoque casi no se veía
+        pero obligaba a releer y desenfocar la franja de detrás en CADA
+        fotograma de scroll) y con la transición acotada a color/sombra en
+        lugar de `transition-all`.
+      */}
+      <div
+        className={`pointer-events-auto w-full max-w-5xl flex items-center justify-between px-6 py-4 rounded-full border transition-[background-color,border-color,box-shadow] duration-500 ease-out ${
           scrolled
-            ? "dark:bg-black/80 bg-white/90 backdrop-blur-xl shadow-2xl dark:border-white/10 border-black/10"
+            ? "dark:bg-black/90 bg-white/95 shadow-2xl dark:border-white/10 border-black/10"
             : "bg-transparent border-transparent"
         }`}
       >
@@ -69,7 +76,7 @@ export function Header() {
           <motion.button
             onClick={toggleCart}
             whileTap={{ scale: 0.9 }}
-            className="relative p-2.5 rounded-full border dark:border-white/20 border-black/20 dark:text-zinc-300 text-zinc-600 hover:border-[#E31E24] hover:text-[#E31E24] transition-all duration-300"
+            className="relative p-2.5 rounded-full border dark:border-white/20 border-black/20 dark:text-zinc-300 text-zinc-600 hover:border-[#E31E24] hover:text-[#E31E24] transition-colors duration-300"
             aria-label="Abrir carrito"
           >
             <ShoppingBag className="w-4 h-4" />
@@ -117,7 +124,7 @@ export function Header() {
           <motion.button
             onClick={toggleTheme}
             whileTap={{ scale: 0.85 }}
-            className="p-2.5 rounded-full border dark:border-white/20 border-black/20 dark:text-zinc-400 text-zinc-500 hover:border-[#1B56D2] hover:text-[#1B56D2] transition-all duration-300"
+            className="p-2.5 rounded-full border dark:border-white/20 border-black/20 dark:text-zinc-400 text-zinc-500 hover:border-[#1B56D2] hover:text-[#1B56D2] transition-colors duration-300"
             aria-label={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -169,7 +176,7 @@ export function Header() {
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Mobile Navigation */}
       <AnimatePresence>

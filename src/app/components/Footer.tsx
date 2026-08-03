@@ -38,7 +38,9 @@ export function Footer() {
 
   return (
     <footer className="relative dark:bg-black bg-white pt-32 pb-8 overflow-hidden dark:border-white/10 border-black/10 border-t transition-colors duration-300">
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#1B56D2]/10 rounded-full blur-[150px] mix-blend-screen opacity-30 translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+      {/* Halo: gradiente radial. Un blur(150px) sobre 800×800 px obligaba a
+          rasterizar una superficie de ~1250×1250 y aplicarle un gaussiano. */}
+      <div className="glow-blue absolute top-0 right-0 w-[800px] h-[800px] rounded-full opacity-70 translate-x-1/3 -translate-y-1/3 pointer-events-none" />
 
       {/* Wordmark gigante de fondo */}
       <motion.div
@@ -49,7 +51,10 @@ export function Footer() {
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         className="pointer-events-none select-none absolute inset-0 z-0 flex items-center justify-center"
       >
-        <span className="block whitespace-nowrap leading-none font-black uppercase tracking-tighter text-[34vw] bg-gradient-to-r from-[#1B56D2] via-[#E31E24] to-[#1B56D2] bg-[length:200%_auto] bg-clip-text text-transparent animate-gradient opacity-[0.12] dark:opacity-20">
+        {/* Gradiente estático a propósito: animar `background-position` sobre
+            un `bg-clip-text` de 34vw repinta el glifo entero en cada fotograma
+            de forma indefinida, incluso sin interacción del usuario. */}
+        <span className="block whitespace-nowrap leading-none font-black uppercase tracking-tighter text-[34vw] bg-gradient-to-r from-[#1B56D2] via-[#E31E24] to-[#1B56D2] bg-clip-text text-transparent opacity-[0.12] dark:opacity-20">
           SEI
         </span>
       </motion.div>
@@ -67,7 +72,7 @@ export function Footer() {
               <span className="text-xs font-bold tracking-widest uppercase text-zinc-500 group-hover:text-foreground transition-colors">
                 Volver arriba
               </span>
-              <span className="w-12 h-12 rounded-full border border-current flex items-center justify-center group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-all duration-300">
+              <span className="w-12 h-12 rounded-full border border-current flex items-center justify-center group-hover:bg-[#1B56D2] group-hover:text-white group-hover:border-transparent transition-colors duration-300">
                 <ArrowUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform duration-300" />
               </span>
             </button>

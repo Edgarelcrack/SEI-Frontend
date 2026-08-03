@@ -65,7 +65,7 @@ export function SoftwareDetail() {
       <div className="relative min-h-[80vh] flex flex-col justify-end pb-24 overflow-hidden dark:border-white/10 border-black/10 border-b">
         <motion.div
           style={{ y: heroY }}
-          className="absolute inset-0 pointer-events-none z-0"
+          className="absolute inset-0 pointer-events-none z-0 will-change-transform"
         >
           <div className="absolute inset-0 bg-black/60 z-10" />
           {heroImage ? (
@@ -75,7 +75,7 @@ export function SoftwareDetail() {
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              className="w-full h-full object-cover filter grayscale opacity-40 mix-blend-luminosity scale-105"
+              className="w-full h-full object-cover filter grayscale opacity-40 scale-105"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#1B56D2]/20 to-transparent" />
@@ -132,9 +132,11 @@ export function SoftwareDetail() {
             {/* Preview Block */}
             {videoUrl && (
               <div className="relative group">
-                <div className="absolute -inset-4 bg-[#1B56D2]/5 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="glow-blue absolute -inset-4 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                 <div className="relative w-full aspect-[16/9] dark:bg-[#0a0a0a] bg-zinc-100 rounded-3xl dark:border-white/10 border-black/10 border overflow-hidden shadow-2xl transition-colors duration-300">
-                  <div className="absolute top-0 w-full h-12 dark:bg-white/5 bg-black/5 dark:border-white/10 border-black/10 border-b flex items-center px-6 gap-3 z-10 backdrop-blur-sm">
+                  {/* El backdrop-blur aquí no tenía nada que desenfocar: la barra
+                      se apoya sobre el fondo opaco de la tarjeta, no sobre el iframe. */}
+                  <div className="absolute top-0 w-full h-12 dark:bg-white/5 bg-black/5 dark:border-white/10 border-black/10 border-b flex items-center px-6 gap-3 z-10">
                     <div className="w-3 h-3 rounded-full bg-[#1B56D2]" />
                     <div className="w-3 h-3 rounded-full dark:bg-white/20 bg-black/20" />
                     <div className="w-3 h-3 rounded-full dark:bg-white/20 bg-black/20" />
@@ -160,13 +162,13 @@ export function SoftwareDetail() {
                 <TabsList className="w-full grid grid-cols-2 bg-transparent dark:border-white/10 border-black/10 border p-2 rounded-2xl h-auto mb-16">
                   <TabsTrigger
                     value="overview"
-                    className="rounded-xl data-[state=active]:bg-[#1B56D2] data-[state=active]:text-white text-zinc-500 font-black tracking-widest uppercase py-4 transition-all"
+                    className="rounded-xl data-[state=active]:bg-[#1B56D2] data-[state=active]:text-white text-zinc-500 font-black tracking-widest uppercase py-4 transition-colors"
                   >
                     RESUMEN
                   </TabsTrigger>
                   <TabsTrigger
                     value="technical"
-                    className="rounded-xl data-[state=active]:bg-[#1B56D2] data-[state=active]:text-white text-zinc-500 font-black tracking-widest uppercase py-4 flex items-center justify-center gap-3 transition-all"
+                    className="rounded-xl data-[state=active]:bg-[#1B56D2] data-[state=active]:text-white text-zinc-500 font-black tracking-widest uppercase py-4 flex items-center justify-center gap-3 transition-colors"
                   >
                     <Cpu className="w-5 h-5" />
                     DOCS TÉCNICOS

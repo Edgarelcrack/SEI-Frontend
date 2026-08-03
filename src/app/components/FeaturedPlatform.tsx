@@ -26,8 +26,8 @@ function FeaturedPlatformImpl({ software }: FeaturedPlatformProps) {
           <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:48px_48px]" />
         </div>
 
-        <div className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-[#1B56D2]/10 blur-[80px] pointer-events-none" />
-        <div className="absolute -bottom-40 -left-32 w-[420px] h-[420px] rounded-full bg-[#E31E24]/10 blur-[80px] pointer-events-none" />
+        <div className="glow-blue absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full pointer-events-none" />
+        <div className="glow-red absolute -bottom-40 -left-32 w-[420px] h-[420px] rounded-full pointer-events-none" />
 
         <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 p-6 md:p-12 lg:p-16 z-10">
           <div className="flex flex-col">
@@ -68,7 +68,7 @@ function FeaturedPlatformImpl({ software }: FeaturedPlatformProps) {
               <span className="text-sm font-black tracking-widest uppercase dark:text-white text-zinc-900 group-hover:text-[#1B56D2] transition-colors duration-500">
                 Explorar Plataforma
               </span>
-              <div className="w-14 h-14 rounded-full bg-[#1B56D2] text-white flex items-center justify-center group-hover:bg-[#E31E24] group-hover:scale-110 group-hover:rotate-45 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-lg">
+              <div className="w-14 h-14 rounded-full bg-[#1B56D2] text-white flex items-center justify-center group-hover:bg-[#E31E24] group-hover:scale-110 group-hover:rotate-45 transition-[background-color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-lg">
                 <ArrowUpRight className="w-6 h-6" />
               </div>
             </div>
@@ -92,7 +92,9 @@ function FeaturedPlatformImpl({ software }: FeaturedPlatformProps) {
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-[#1B56D2]/20 to-[#1B56D2]/5" />
               )}
-              <div className="absolute top-6 left-6 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10">
+              {/* Sin backdrop-blur: la imagen de debajo escala en hover, así que
+                  el desenfoque se recalculaba en cada fotograma de la transición. */}
+              <div className="absolute top-6 left-6 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 border border-white/10">
                 <span className="w-2 h-2 rounded-full bg-[#1B56D2] animate-pulse" />
                 <span className="text-[10px] font-black tracking-widest uppercase text-white">
                   Destacado

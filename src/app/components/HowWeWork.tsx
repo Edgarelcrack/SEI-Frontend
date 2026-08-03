@@ -66,7 +66,7 @@ export function HowWeWork() {
           <div className="absolute left-[7px] md:left-1/2 md:ml-[-1px] top-2 bottom-2 w-0.5 dark:bg-white/10 bg-black/10 rounded-full" />
           <motion.div
             style={{ scaleY: lineScale }}
-            className="absolute left-[7px] md:left-1/2 md:ml-[-1px] top-2 bottom-2 w-0.5 origin-top rounded-full bg-gradient-to-b from-[#1B56D2] via-[#1B56D2] to-[#E31E24]"
+            className="absolute left-[7px] md:left-1/2 md:ml-[-1px] top-2 bottom-2 w-0.5 origin-top will-change-transform rounded-full bg-gradient-to-b from-[#1B56D2] via-[#1B56D2] to-[#E31E24]"
           />
 
           {STEPS.map((step, i) => {

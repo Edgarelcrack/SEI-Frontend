@@ -3,14 +3,22 @@
 
 @import 'tw-animate-css';
 
+/*
+ * Cinta infinita. El contenido va duplicado, así que desplazar exactamente el
+ * 50 % deja el bucle sin costura.
+ *
+ * `translate3d` en lugar de `translateX` para garantizar que el desplazamiento
+ * se resuelve en la GPU y no toca layout ni pintado en ningún fotograma.
+ */
 @keyframes marquee {
-  from { transform: translateX(0%); }
-  to   { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 
 @utility animate-marquee {
   animation: marquee 15s linear infinite;
   will-change: transform;
+  backface-visibility: hidden;
 }
 
 @keyframes gradient-shift {
@@ -18,9 +26,68 @@
   50%      { background-position: 100% 50%; }
 }
 
+/*
+ * Solo para el preloader, que vive un par de segundos y desaparece.
+ *
+ * No aplicar a texto persistente. Animar `background-position` sobre
+ * `background-clip: text` es una operación de PINTADO, no de composición: el
+ * navegador rasteriza los glifos completos y vuelve a rellenar el degradado a
+ * través de ellos en cada fotograma, indefinidamente. A cuerpos grandes es lo
+ * más caro que puede hacer una página, y no se nota que sea caro porque se ve
+ * fluido: lo que se satura es el hilo gráfico, que deja de estar disponible
+ * para el scroll.
+ *
+ * Donde el degradado deba quedarse en pantalla, va estático (ver el hero de la
+ * Home y el wordmark del Footer).
+ */
 @utility animate-gradient {
   animation: gradient-shift 6s ease-in-out infinite;
-  will-change: background-position;
+}
+
+/*
+ * Promueve el elemento a su propia capa de composición para que scroll y
+ * transformaciones no obliguen a repintar el árbol padre. Usar con criterio:
+ * cada capa consume memoria de GPU.
+ */
+@utility gpu-layer {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/*
+ * Halos de marca. Sustituyen a `blur-[70px…150px]`: un filtro de desenfoque
+ * obliga al navegador a reservar una superficie fuera de pantalla y ejecutar
+ * un gaussiano de radio enorme (Firefox lo hace en CPU en muchos equipos).
+ * Un gradiente radial da el mismo resultado visual en una sola pasada.
+ */
+@utility glow-blue {
+  background-image: radial-gradient(
+    circle closest-side,
+    rgba(27, 86, 210, 0.20),
+    rgba(27, 86, 210, 0.07) 55%,
+    transparent 78%
+  );
+}
+
+@utility glow-red {
+  background-image: radial-gradient(
+    circle closest-side,
+    rgba(227, 30, 36, 0.18),
+    rgba(227, 30, 36, 0.06) 55%,
+    transparent 78%
+  );
+}
+
+/*
+ * Grano fino. Antes se pedía un SVG a un host externo y se dimensionaba al
+ * viewport completo, así que `feTurbulence` se calculaba sobre toda la
+ * pantalla. Ahora es un tile local de 200×200 que se rasteriza una vez.
+ */
+@utility noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  background-repeat: repeat;
 }
 
 /* Cursor personalizado: oculta el nativo solo cuando está activo (desktop). */

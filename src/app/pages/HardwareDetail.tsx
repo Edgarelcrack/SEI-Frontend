@@ -68,7 +68,7 @@ export function HardwareDetail() {
       <div className="relative min-h-[80vh] flex flex-col justify-end pb-24 overflow-hidden dark:border-white/10 border-black/10 border-b">
         <motion.div
           style={{ y: heroY }}
-          className="absolute inset-0 pointer-events-none z-0"
+          className="absolute inset-0 pointer-events-none z-0 will-change-transform"
         >
           <div className="absolute inset-0 bg-black/60 z-10" />
           {heroImage ? (
@@ -78,7 +78,7 @@ export function HardwareDetail() {
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              className="w-full h-full object-cover filter grayscale opacity-40 mix-blend-luminosity scale-105"
+              className="w-full h-full object-cover filter grayscale opacity-40 scale-105"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#E31E24]/20 to-transparent" />
@@ -123,7 +123,7 @@ export function HardwareDetail() {
             {/* Hero image (non-thumbnail) gallery */}
             {heroImage && (
               <div className="relative group">
-                <div className="absolute -inset-4 bg-[#E31E24]/5 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="glow-red absolute -inset-4 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                 <div className="relative w-full aspect-[16/9] dark:bg-[#0a0a0a] bg-zinc-100 rounded-3xl dark:border-white/10 border-black/10 border overflow-hidden shadow-2xl">
                   <img
                     src={heroImage}
@@ -140,13 +140,13 @@ export function HardwareDetail() {
                 <TabsList className="w-full grid grid-cols-2 bg-transparent dark:border-white/10 border-black/10 border p-2 rounded-2xl h-auto mb-16">
                   <TabsTrigger
                     value="description"
-                    className="rounded-xl data-[state=active]:bg-[#E31E24] data-[state=active]:text-white text-zinc-500 font-black tracking-widest uppercase py-4 transition-all"
+                    className="rounded-xl data-[state=active]:bg-[#E31E24] data-[state=active]:text-white text-zinc-500 font-black tracking-widest uppercase py-4 transition-colors"
                   >
                     DESCRIPCIÓN
                   </TabsTrigger>
                   <TabsTrigger
                     value="specs"
-                    className="rounded-xl data-[state=active]:bg-[#E31E24] data-[state=active]:text-white text-zinc-500 font-black tracking-widest uppercase py-4 flex items-center justify-center gap-3 transition-all"
+                    className="rounded-xl data-[state=active]:bg-[#E31E24] data-[state=active]:text-white text-zinc-500 font-black tracking-widest uppercase py-4 flex items-center justify-center gap-3 transition-colors"
                   >
                     <Package className="w-5 h-5" />
                     ESPECIFICACIONES

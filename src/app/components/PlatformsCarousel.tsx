@@ -80,12 +80,20 @@ export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
 
           if (!visible) return null;
 
+          /*
+           * Sin `transformStyle: preserve-3d`. Solo sirve para que los
+           * descendientes compartan el espacio 3D del padre, y aquí no hay
+           * ninguno que lo necesite: cada tarjeta es contenido plano al que el
+           * carrusel aplica un `rotateY`. Mantenerlo impedía al navegador
+           * aplanar la tarjeta a una superficie 2D normal y cachearla, así que
+           * la rasterizaba dentro del contexto 3D con sus sombras e imágenes.
+           * La `perspective` del contenedor basta para el efecto.
+           */
           return (
             <motion.div
               key={item.id}
               className="absolute top-1/2 left-1/2 w-[88%] max-w-[640px]"
               style={{
-                transformStyle: "preserve-3d",
                 transformOrigin: "center center",
                 pointerEvents: isActive ? "auto" : "none",
               }}
@@ -99,9 +107,12 @@ export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
               }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
+              {/* Sin `transition-shadow`: interpolar una sombra de 120 px de
+                  radio significa repintarla entera en cada fotograma durante
+                  medio segundo, justo mientras el carrusel ya está rotando. */}
               <div
                 aria-hidden={!isActive}
-                className={`transition-shadow duration-500 ${
+                className={`${
                   isActive ? "shadow-[0_40px_120px_-20px_rgba(0,0,0,0.45)]" : ""
                 } rounded-3xl`}
               >
