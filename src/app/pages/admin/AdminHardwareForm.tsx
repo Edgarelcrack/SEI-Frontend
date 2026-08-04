@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router";
 import { ArrowLeft, Loader2, Save, Wand2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { PageTitle } from "../../components/PageTitle";
+import { ImageManager } from "../../components/admin/ImageManager";
 import {
   Field,
   inputClass,
@@ -311,6 +312,10 @@ export function AdminHardwareForm() {
             </div>
           </Field>
         )}
+
+        <div className="pt-4 border-t dark:border-white/10 border-black/10">
+          <ImageManager kind="hardware" productId={id ?? null} />
+        </div>
 
         <div className="flex gap-3 pt-4">
           <button

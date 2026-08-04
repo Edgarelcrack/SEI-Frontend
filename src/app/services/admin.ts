@@ -259,6 +259,116 @@ export function deleteAdminHardware(token: string, id: string) {
 }
 
 // ---------------------------------------------------------------------------
+// Imágenes
+// ---------------------------------------------------------------------------
+
+export type ImageKind = 'software' | 'hardware'
+
+export interface AdminImage {
+  id: string
+  storage_path: string
+  url: string
+  alt_text: string | null
+  is_thumbnail: boolean
+  sort_order: number
+  created_at: string
+}
+
+interface UploadUrlResponse {
+  signed_url: string
+  token: string
+  storage_path: string
+  bucket: string
+  max_size: number
+}
+
+export function listAdminImages(token: string, kind: ImageKind, productId: string) {
+  return adminFetch<{ data: AdminImage[] }>(`/images/${kind}/${productId}`, token)
+}
+
+export function updateAdminImage(
+  token: string,
+  kind: ImageKind,
+  imageId: string,
+  body: { alt_text?: string | null; is_thumbnail?: boolean; sort_order?: number },
+) {
+  return adminFetch<{ data: AdminImage }>(`/images/${kind}/image/${imageId}`, token, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  })
+}
+
+export function reorderAdminImages(
+  token: string,
+  kind: ImageKind,
+  productId: string,
+  imageIds: string[],
+) {
+  return adminFetch<{ data: AdminImage[] }>(`/images/${kind}/${productId}/reorder`, token, {
+    method: 'PUT',
+    body: JSON.stringify({ image_ids: imageIds }),
+  })
+}
+
+export function deleteAdminImage(token: string, kind: ImageKind, imageId: string) {
+  return adminFetch<{ data: { deleted: boolean } }>(`/images/${kind}/image/${imageId}`, token, {
+    method: 'DELETE',
+  })
+}
+
+/**
+ * Sube una imagen en tres pasos:
+ *
+ *   1. Pide al backend una URL firmada de subida.
+ *   2. Hace PUT del archivo DIRECTO a Supabase Storage.
+ *   3. Registra la ruta resultante en la base de datos.
+ *
+ * El paso 2 no toca la función serverless a propósito: Vercel limita el body de
+ * request a ~4.5 MB, por debajo del límite de 5 MB del bucket, así que subir a
+ * través del backend fallaría con las imágenes grandes.
+ */
+export async function uploadAdminImage(
+  token: string,
+  kind: ImageKind,
+  productId: string,
+  file: File,
+  altText?: string,
+): Promise<AdminImage> {
+  const { data: upload } = await adminFetch<{ data: UploadUrlResponse }>(
+    `/images/${kind}/${productId}/upload-url`,
+    token,
+    {
+      method: 'POST',
+      body: JSON.stringify({ content_type: file.type, size: file.size }),
+    },
+  )
+
+  const res = await fetch(upload.signed_url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': file.type,
+      'cache-control': 'max-age=31536000',
+    },
+    body: file,
+  })
+
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '')
+    throw new Error(`No se pudo subir la imagen a Storage. ${detail}`.trim())
+  }
+
+  const { data } = await adminFetch<{ data: AdminImage }>(`/images/${kind}/${productId}`, token, {
+    method: 'POST',
+    body: JSON.stringify({
+      storage_path: upload.storage_path,
+      alt_text: altText?.trim() || null,
+    }),
+  })
+
+  return data
+}
+
+// ---------------------------------------------------------------------------
 // Tags
 // ---------------------------------------------------------------------------
 
