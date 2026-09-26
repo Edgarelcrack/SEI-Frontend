@@ -44,7 +44,6 @@ function HardwareCardImpl({ hardware }: HardwareCardProps) {
         ref={ref}
         onMouseMove={handleMouseMove}
         to={`/hardware/${hardware.slug}`}
-        data-cursor="ver"
         className="group block relative w-full h-full dark:border-white/10 border-black/10 border hover:border-[#E31E24]/50 transition-colors duration-500 dark:bg-[#0a0a0a] bg-zinc-100 rounded-3xl overflow-hidden"
       >
         <div
@@ -70,7 +69,6 @@ function HardwareCardImpl({ hardware }: HardwareCardProps) {
           </div>
 
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border dark:border-white/5 border-black/5 mb-10 shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60" />
             {hardware.thumbnail_url ? (
               /* Ver nota en SoftwareCard: se evita `transition-all` y se acorta
                  la transición del `filter`, que es la más cara de las tres. */

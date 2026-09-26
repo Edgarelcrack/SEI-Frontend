@@ -38,19 +38,19 @@ export function HowWeWork() {
   return (
     <section
       id="approach"
-      className="cv-auto scroll-mt-32 py-32 px-6 lg:px-12 relative z-10"
+      className="cv-auto scroll-mt-8 py-32 px-6 lg:px-12 relative z-10"
     >
       <div className="max-w-[1400px] w-full mx-auto">
         <div className="mb-24">
           <div className="text-xs font-bold tracking-[0.3em] uppercase text-[#1B56D2] mb-4">
             Nuestro Enfoque
           </div>
-          <h2 className="text-[8vw] sm:text-6xl md:text-7xl font-black tracking-tighter uppercase leading-none mb-8">
+          <h2 className="text-display font-black tracking-tighter uppercase leading-none mb-8">
             CÓMO
             <br />
             <span
               className="text-background"
-              style={{ WebkitTextStroke: "4px #E31E24", paintOrder: "stroke fill" }}
+              style={{ WebkitTextStroke: "0.056em #E31E24", paintOrder: "stroke fill" }}
             >
               TRABAJAMOS.
             </span>

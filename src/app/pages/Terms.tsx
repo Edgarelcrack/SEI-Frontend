@@ -30,7 +30,7 @@ export function Terms() {
           <div className="font-mono text-xs tracking-[0.35em] uppercase text-[#1B56D2] mb-6">
             Legal // Condiciones de uso
           </div>
-          <h1 className="text-[14vw] sm:text-7xl md:text-8xl font-black tracking-tighter uppercase leading-none mb-6">
+          <h1 className="text-display-lg font-black tracking-tighter uppercase leading-none mb-6">
             TÉRMINOS<span className="text-[#E31E24]">.</span>
           </h1>
           <p className="font-mono text-xs tracking-widest uppercase text-zinc-500">

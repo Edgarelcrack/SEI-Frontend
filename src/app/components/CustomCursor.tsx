@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "motion/react";
 
-type CursorMode = "default" | "link" | "ver" | "hidden";
+type CursorMode = "default" | "link" | "hidden";
 
 const ringVariants = {
-  default: { width: 36, height: 36, opacity: 1, backgroundColor: "rgba(27, 86, 210, 0)" },
-  link: { width: 60, height: 60, opacity: 1, backgroundColor: "rgba(27, 86, 210, 0)" },
-  ver: { width: 88, height: 88, opacity: 1, backgroundColor: "rgba(27, 86, 210, 1)" },
-  hidden: { width: 36, height: 36, opacity: 0, backgroundColor: "rgba(27, 86, 210, 0)" },
+  default: { width: 36, height: 36, opacity: 1 },
+  link: { width: 60, height: 60, opacity: 1 },
+  hidden: { width: 36, height: 36, opacity: 0 },
 };
 
 /**
  * Cursor brutalista: punto que sigue directo + anillo con retraso elástico.
- * Crece sobre enlaces y se convierte en un disco "VER" sobre las cards
- * marcadas con data-cursor="ver". Solo se activa con puntero fino (desktop).
+ * Crece un poco sobre elementos interactivos; nunca cambia de forma ni muestra
+ * etiquetas. Solo se activa con puntero fino (desktop).
  *
  * Rendimiento: aquí NO se usa `mix-blend-mode`. Un blend sobre un elemento
  * fijo que se mueve con el ratón obliga al navegador a releer y recomponer
@@ -43,8 +42,7 @@ export function CustomCursor() {
     const handleOver = (e: MouseEvent) => {
       const target = e.target;
       if (!(target instanceof Element)) return;
-      if (target.closest('[data-cursor="ver"]')) setMode("ver");
-      else if (target.closest("input, textarea, select")) setMode("hidden");
+      if (target.closest("input, textarea, select")) setMode("hidden");
       else if (target.closest('a, button, [role="button"], label, summary')) setMode("link");
       else setMode("default");
     };
@@ -73,22 +71,12 @@ export function CustomCursor() {
         style={{ x: ringX, y: ringY }}
       >
         <motion.div
-          className={`-translate-x-1/2 -translate-y-1/2 rounded-full border flex items-center justify-center ${
-            mode === "ver" ? "border-transparent" : "dark:border-white border-zinc-900"
-          }`}
+          className="-translate-x-1/2 -translate-y-1/2 rounded-full border dark:border-white border-zinc-900"
           variants={ringVariants}
           initial="hidden"
           animate={mode}
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <motion.span
-            className="text-white text-[10px] font-black tracking-[0.25em] uppercase select-none"
-            animate={{ opacity: mode === "ver" ? 1 : 0, scale: mode === "ver" ? 1 : 0.5 }}
-            transition={{ duration: 0.2 }}
-          >
-            Ver
-          </motion.span>
-        </motion.div>
+        />
       </motion.div>
 
       {/* Punto (sigue directo, sin retraso) */}
@@ -100,7 +88,7 @@ export function CustomCursor() {
         <motion.div
           className="w-2 h-2 -ml-1 -mt-1 rounded-full dark:bg-white bg-zinc-900"
           animate={{
-            scale: mode === "ver" || mode === "hidden" ? 0 : 1,
+            scale: mode === "hidden" ? 0 : 1,
             opacity: mode === "hidden" ? 0 : 1,
           }}
           transition={{ duration: 0.2 }}

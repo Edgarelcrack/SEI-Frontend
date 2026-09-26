@@ -199,13 +199,13 @@ export function Services() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1 className="text-[12vw] sm:text-[9vw] leading-[0.85] font-black tracking-tighter uppercase mb-12">
+            <h1 className="text-display-xl leading-[0.85] font-black tracking-tighter uppercase mb-12">
               SERVICIOS
               <br />
               <span
                 className="text-background"
                 style={{
-                  WebkitTextStroke: "6px #1B56D2",
+                  WebkitTextStroke: "0.044em #1B56D2",
                   paintOrder: "stroke fill"
                 }}
               >
@@ -253,12 +253,12 @@ export function Services() {
       </section>
 
       {/* Contact Section */}
-      <section id="contacto" className="scroll-mt-32 py-32 px-6 lg:px-12 relative z-10 bg-background transition-colors duration-300">
+      <section id="contacto" className="scroll-mt-8 py-32 px-6 lg:px-12 relative z-10 bg-background transition-colors duration-300">
         <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20">
 
           <div className="flex flex-col justify-between">
             <div>
-              <h2 className="text-[8vw] sm:text-7xl font-black tracking-tighter uppercase mb-8 leading-none">
+              <h2 className="text-display font-black tracking-tighter uppercase mb-8 leading-none">
                 INICIA TU
                 <br />
                 <span className="text-[#E31E24]">PROYECTO.</span>
@@ -269,10 +269,10 @@ export function Services() {
             </div>
 
             <div className="space-y-6 mt-16 lg:mt-0">
-              <a href="mailto:contact@correo.com" className="flex items-center justify-between group py-6 dark:border-white/10 border-black/10 border-b hover:border-[#1B56D2] transition-colors">
+              <a href="mailto:sistemasespecializados.sei@gmail.com" className="flex items-center justify-between group py-6 dark:border-white/10 border-black/10 border-b hover:border-[#1B56D2] transition-colors">
                 <span className="text-sm font-bold tracking-widest uppercase text-zinc-500 group-hover:text-foreground transition-colors">Correo</span>
-                <span className="text-xl md:text-2xl font-black uppercase tracking-tighter group-hover:text-[#1B56D2] transition-colors flex items-center gap-4">
-                  contact@correo.com <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform" />
+                <span className="text-sm sm:text-base md:text-xl font-black uppercase tracking-tighter group-hover:text-[#1B56D2] transition-colors flex items-center gap-3 text-right break-all">
+                  sistemasespecializados.sei@gmail.com <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6 shrink-0 group-hover:rotate-45 transition-transform" />
                 </span>
               </a>
               <div className="flex items-center justify-between py-6 dark:border-white/10 border-black/10 border-b">

@@ -12,6 +12,7 @@
         content="Diseñamos productos digitales escalables, brutalistas y ultramodernos. Ingeniería de software de alto rendimiento para marcas con ambición."
       />
       <meta name="theme-color" content="#1B56D2" />
+      <meta name="color-scheme" content="dark light" />
       <link rel="canonical" href="https://sei-sistemas.com/" />
 
       <!-- Favicon -->
@@ -44,11 +45,19 @@
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
       <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
       <link rel="preconnect" href="https://grainy-gradients.vercel.app" crossorigin />
+      <!--
+        Logotipo del hero: es el elemento LCP de la portada. El tema arranca
+        siguiendo la preferencia del navegador (ver ThemeContext), así que cada
+        variante se precarga solo bajo su media query; en claro se usa
+        /favicon.png, que de todas formas ya se pide como icono.
+      -->
+      <link rel="preload" as="image" href="/logo-sei-dark.png" media="(prefers-color-scheme: dark)" fetchpriority="high" />
+      <link rel="preload" as="image" href="/favicon.png" media="(prefers-color-scheme: light)" fetchpriority="high" />
       <link
         rel="preload"
         as="image"
-        href="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=70"
-        fetchpriority="high"
+        href="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=70&sat=-40&con=10"
+        fetchpriority="low"
       />
       <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
     </head>

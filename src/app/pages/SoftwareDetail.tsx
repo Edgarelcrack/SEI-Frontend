@@ -97,7 +97,7 @@ export function SoftwareDetail() {
               <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-[#1B56D2]/30 bg-[#1B56D2]/10 text-[#1B56D2] text-sm font-bold tracking-widest uppercase mb-8">
                 {categoryLabel}
               </div>
-              <h1 className="text-6xl md:text-8xl lg:text-[8vw] leading-[0.85] font-black tracking-tighter uppercase mb-6">
+              <h1 className="text-display-detail leading-[0.85] font-black tracking-tighter uppercase mb-6">
                 {software.name}
               </h1>
               <p className="text-2xl md:text-3xl text-zinc-400 font-light leading-relaxed tracking-tight max-w-3xl">

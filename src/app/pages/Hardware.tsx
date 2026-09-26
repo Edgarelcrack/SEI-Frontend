@@ -140,7 +140,7 @@ export function Hardware() {
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase"
+              className="text-display-xl leading-[0.85] font-black tracking-tighter uppercase"
             >
               TODOS LOS
             </motion.h1>
@@ -150,8 +150,8 @@ export function Hardware() {
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase text-background"
-              style={{ WebkitTextStroke: "6px #1B56D2", paintOrder: "stroke fill" }}
+              className="text-display-xl leading-[0.85] font-black tracking-tighter uppercase text-background"
+              style={{ WebkitTextStroke: "0.044em #1B56D2", paintOrder: "stroke fill" }}
             >
               EQUIPOS.
             </motion.h1>

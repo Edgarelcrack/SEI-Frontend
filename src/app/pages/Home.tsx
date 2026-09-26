@@ -9,9 +9,11 @@ import { PageTitle } from "../components/PageTitle";
 import { CountUp } from "../components/CountUp";
 import { RevealText } from "../components/RevealText";
 import { HowWeWork } from "../components/HowWeWork";
+import { useTheme } from "../context/ThemeContext";
 import { listSoftware, type SoftwareListItem } from "../services/software";
 
 export function Home() {
+  const { isDark } = useTheme();
 
   /*
    * El marquee es la única animación CSS que queda en la Home, y se pausa
@@ -114,41 +116,44 @@ export function Home() {
         </div>
 
         <div className="max-w-[1400px] w-full mx-auto relative">
-          <div className="overflow-hidden mb-6">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase"
-            >
-              SOFTWARE
-            </motion.h1>
-          </div>
-          <div className="overflow-hidden mb-12">
-            {/*
-              Degradado estático que recorre las letras: S azul, E en la mezcla,
-              I y punto rojos.
+          {/*
+            El logotipo ocupa el lugar del antiguo titular «SOFTWARE / SEI.».
+            Es el elemento LCP de la portada: va precargado desde el index.html
+            y lleva `width`/`height` reales (1270×673) para que el hueco quede
+            reservado antes de que llegue el archivo y la entrada del hero no
+            provoque un salto de layout.
 
-              `inline-block` es imprescindible. Con `background-clip: text` el
-              degradado se reparte sobre la caja del elemento, no sobre los
-              glifos; como bloque, el h1 ocupaba todo el ancho del contenedor y
-              el texto solo mostraba una franja estrecha, de ahí que se viera de
-              un color plano. Ajustando la caja al texto, el degradado empieza
-              en la S y termina en el punto.
+            Sigue siendo el h1 de la página; el texto del encabezado lo aporta
+            el `alt`, así que la jerarquía y el SEO no cambian respecto al
+            titular que había antes.
 
-              Las paradas al 10 % y 90 % reservan los extremos para que la S
-              salga azul limpia y el punto rojo limpio, y concentran la mezcla
-              en el centro, que es donde cae la E.
-            */}
-            <motion.h1
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="inline-block text-[12vw] sm:text-[10vw] leading-[0.85] font-black tracking-tighter uppercase bg-gradient-to-r from-[#1B56D2] from-10% to-[#E31E24] to-90% bg-clip-text text-transparent"
+            Dos archivos en lugar de uno: el logo original lleva la tipografía
+            en negro y una sombra de apoyo gris, pensadas para papel blanco, y
+            sobre el fondo oscuro se perdían. `logo-sei-dark.png` es el mismo
+            arte con el texto en el color de --foreground y sin las dos sombras;
+            lo genera `scripts/generar-logo-oscuro.py`, que hay que volver a
+            pasar si cambia el logo original. Se elige uno u otro en lugar de
+            pintar los dos y ocultar uno con CSS, para no descargar un archivo
+            que no se va a ver.
+          */}
+          <h1 className="flex justify-center mb-12">
+            <motion.span
+              initial={{ opacity: 0, y: 40, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block w-full max-w-[880px]"
             >
-              SEI.
-            </motion.h1>
-          </div>
+              <img
+                src={isDark ? "/logo-sei-dark.png" : "/favicon.png"}
+                alt="SEI — Sistemas Especializados de Información"
+                width={1270}
+                height={673}
+                decoding="async"
+                draggable={false}
+                className="w-full h-auto object-contain select-none"
+              />
+            </motion.span>
+          </h1>
 
           <div className="flex flex-col md:flex-row gap-10 md:gap-20 md:items-end justify-between dark:border-white/10 border-black/10 border-t pt-10 mt-20">
             <RevealText
@@ -234,7 +239,7 @@ export function Home() {
         <div className="max-w-[1400px] w-full mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-10">
             <div>
-              <h2 className="text-[8vw] sm:text-7xl font-black tracking-tighter uppercase mb-6 leading-none">
+              <h2 className="text-display font-black tracking-tighter uppercase mb-6 leading-none">
                 PLATAFORMAS
               </h2>
               <p className="text-xl md:text-2xl text-zinc-500 font-light max-w-2xl">
@@ -270,9 +275,9 @@ export function Home() {
                 <div className="text-xs font-bold tracking-[0.3em] uppercase text-[#1B56D2] mb-4">
                   Explora Más
                 </div>
-                <h2 className="text-[8vw] sm:text-6xl font-black tracking-tighter uppercase leading-none">
+                <h2 className="text-display-sm font-black tracking-tighter uppercase leading-none">
                   OTRAS<br />
-                  <span className="text-background" style={{ WebkitTextStroke: "4px #1B56D2", paintOrder: "stroke fill" }}>
+                  <span className="text-background" style={{ WebkitTextStroke: "0.067em #1B56D2", paintOrder: "stroke fill" }}>
                     PLATAFORMAS.
                   </span>
                 </h2>
@@ -317,10 +322,10 @@ export function Home() {
         </div>
 
         <div className="max-w-[1400px] w-full mx-auto flex flex-col items-center text-center relative z-10">
-          <h2 className="text-[10vw] sm:text-[8vw] font-black tracking-tighter uppercase mb-12 leading-[0.9]">
+          <h2 className="text-display-xl font-black tracking-tighter uppercase mb-12 leading-[0.9]">
             EMPIEZA A
             <br />
-            <span className="text-background" style={{ WebkitTextStroke: "8px #E31E24", paintOrder: "stroke fill" }}>CONSTRUIR.</span>
+            <span className="text-background" style={{ WebkitTextStroke: "0.059em #E31E24", paintOrder: "stroke fill" }}>CONSTRUIR.</span>
           </h2>
 
           <Link

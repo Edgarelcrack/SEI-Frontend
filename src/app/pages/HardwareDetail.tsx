@@ -100,7 +100,7 @@ export function HardwareDetail() {
               <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-[#E31E24]/30 bg-[#E31E24]/10 text-[#E31E24] text-sm font-bold tracking-widest uppercase mb-8">
                 {categoryLabel}
               </div>
-              <h1 className="text-6xl md:text-8xl lg:text-[8vw] leading-[0.85] font-black tracking-tighter uppercase mb-6">
+              <h1 className="text-display-detail leading-[0.85] font-black tracking-tighter uppercase mb-6">
                 {hardware.name}
               </h1>
               {hardware.brand && (

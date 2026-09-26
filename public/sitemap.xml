@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: añade aquí las URLs de cada software (/software/:id) cuando esté la base de datos -->
+<!-- TODO: generar dinámicamente las URLs de /software/:slug y /hardware/:slug cuando esté la base de datos -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://sei-sistemas.com/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
     <loc>https://sei-sistemas.com/platforms</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-08-08</lastmod>
+  </url>
+  <url>
+    <loc>https://sei-sistemas.com/hardware</loc>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
     <loc>https://sei-sistemas.com/services</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
     <loc>https://sei-sistemas.com/privacidad</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-08-08</lastmod>
   </url>
   <url>
     <loc>https://sei-sistemas.com/terminos</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2026-08-08</lastmod>
   </url>
 </urlset>

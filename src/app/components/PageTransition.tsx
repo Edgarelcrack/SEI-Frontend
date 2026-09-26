@@ -22,10 +22,48 @@ export function PageTransition() {
   useEffect(() => {
     if (!location.hash) return;
     const id = location.hash.slice(1);
-    const timer = setTimeout(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    let correction: number | undefined;
+    let userTookOver = false;
+    const release = () => {
+      userTookOver = true;
+    };
+
+    const start = window.setTimeout(() => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      /*
+       * Segunda pasada, a propósito. Las secciones llevan
+       * `content-visibility: auto`: la primera vez que se visitan, el navegador
+       * todavía no conoce su alto real y las mide con el valor de placeholder.
+       * `scrollIntoView` calcula el destino con esas alturas, y mientras el
+       * scroll avanza las secciones intermedias se renderizan de verdad, el
+       * documento se reajusta y el ancla se desplaza: la animación termina
+       * corta. Cuando el scroll suave ya ha parado se vuelve a medir y se
+       * corrige solo si de verdad quedó fuera de sitio.
+       */
+      correction = window.setTimeout(() => {
+        const target = document.getElementById(id);
+        if (userTookOver || !target) return;
+        const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+        if (Math.abs(target.getBoundingClientRect().top - margin) > 4) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 900);
     }, 600);
-    return () => clearTimeout(timer);
+
+    // Si el usuario coge el scroll durante ese intervalo, no se le corrige debajo.
+    window.addEventListener("wheel", release, { passive: true });
+    window.addEventListener("touchstart", release, { passive: true });
+
+    return () => {
+      window.clearTimeout(start);
+      window.clearTimeout(correction);
+      window.removeEventListener("wheel", release);
+      window.removeEventListener("touchstart", release);
+    };
   }, [location]);
 
   return (

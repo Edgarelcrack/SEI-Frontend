@@ -29,7 +29,10 @@ function FeaturedPlatformImpl({ software }: FeaturedPlatformProps) {
         <div className="glow-blue absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full pointer-events-none" />
         <div className="glow-red absolute -bottom-40 -left-32 w-[420px] h-[420px] rounded-full pointer-events-none" />
 
-        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 p-6 md:p-12 lg:p-16 z-10">
+        {/* `min-h` en la tarjeta, no en la imagen: el alto extra se reparte
+            entre los bloques de la columna de texto (el pie va con `mt-auto`)
+            y la imagen queda centrada, en vez de estirar el thumbnail. */}
+        <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 p-6 md:p-12 lg:p-16 lg:py-24 lg:min-h-[680px] z-10">
           <div className="flex flex-col">
             <div className="flex flex-wrap items-center gap-3 mb-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1B56D2] text-white text-xs font-black tracking-widest uppercase shadow-lg shadow-[#1B56D2]/30">
@@ -74,31 +77,35 @@ function FeaturedPlatformImpl({ software }: FeaturedPlatformProps) {
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute -top-4 -right-4 w-32 h-32 rounded-3xl border-2 border-[#1B56D2]/30 hidden md:block" />
-            <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-3xl border-2 border-[#E31E24]/30 hidden md:block" />
+          {/* Columna de imagen centrada: el marco es apaisado (16:9, el formato
+              real de los thumbnails) y por tanto más bajo que la columna de
+              texto, así que se centra en vez de quedar pegado arriba. */}
+          <div className="relative flex items-center">
+            <div className="relative w-full">
+              <div className="absolute -top-4 -right-4 w-32 h-32 rounded-3xl border-2 border-[#1B56D2]/30 hidden md:block" />
+              <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-3xl border-2 border-[#E31E24]/30 hidden md:block" />
 
-            <div className="relative w-full aspect-[4/5] md:aspect-[4/5] rounded-2xl overflow-hidden bg-black border dark:border-white/10 border-black/10 shadow-2xl">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
-              {software.thumbnail_url ? (
-                <img
-                  src={software.thumbnail_url}
-                  alt={software.name}
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                  className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-[#1B56D2]/20 to-[#1B56D2]/5" />
-              )}
-              {/* Sin backdrop-blur: la imagen de debajo escala en hover, así que
-                  el desenfoque se recalculaba en cada fotograma de la transición. */}
-              <div className="absolute top-6 left-6 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 border border-white/10">
-                <span className="w-2 h-2 rounded-full bg-[#1B56D2] animate-pulse" />
-                <span className="text-[10px] font-black tracking-widest uppercase text-white">
-                  Destacado
-                </span>
+              <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border dark:border-white/10 border-black/10 shadow-2xl">
+                {software.thumbnail_url ? (
+                  <img
+                    src={software.thumbnail_url}
+                    alt={software.name}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#1B56D2]/20 to-[#1B56D2]/5" />
+                )}
+                {/* Sin backdrop-blur: la imagen de debajo escala en hover, así que
+                    el desenfoque se recalculaba en cada fotograma de la transición. */}
+                <div className="absolute top-6 left-6 z-20 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 border border-white/10">
+                  <span className="w-2 h-2 rounded-full bg-[#1B56D2] animate-pulse" />
+                  <span className="text-[10px] font-black tracking-widest uppercase text-white">
+                    Destacado
+                  </span>
+                </div>
               </div>
             </div>
           </div>

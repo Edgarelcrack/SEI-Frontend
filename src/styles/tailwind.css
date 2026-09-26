@@ -132,3 +132,56 @@ html.has-custom-cursor select {
 @utility animate-glitch-b {
   animation: glitch-b 2.8s steps(1, end) infinite;
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * Escala de titulares: fluida pero ACOTADA por los dos extremos.
+ * ---------------------------------------------------------------------------
+ *
+ * Qué arregla. Los titulares usaban tamaños en `vw` puros (`text-[10vw]`,
+ * `text-[12vw]`...) dentro de contenedores topados (`max-w-[1400px]`,
+ * `max-w-4xl`). El `vw` sigue al viewport, el contenedor no: pasados los
+ * ~1500 px el contenedor se queda quieto y la tipografía sigue creciendo, así
+ * que el titular se sale de su caja. Donde el envoltorio del reveal lleva
+ * `overflow-hidden` se veía cortado por los lados; donde no lo lleva, aparecía
+ * scroll horizontal. En el otro extremo, un `text-[14vw]` en una pantalla de
+ * 375 px también desbordaba el ancho útil (375 - 48 de padding = 327 px).
+ *
+ * `clamp(mínimo, fluido, máximo)` fija ambos topes y deja proporcional solo el
+ * tramo intermedio, que es donde el efecto tiene sentido.
+ *
+ * Los máximos están calculados contra el ancho útil del contenedor (1304 px a
+ * 1400 px de viewport) y la palabra más larga del sitio, "PLATAFORMAS.", que
+ * en peso black con `tracking-tighter` ocupa unos 7,6 em.
+ */
+
+/* Héroes de página: Plataformas, Equipos, Servicios, CTA final. */
+@utility text-display-xl {
+  font-size: clamp(2.25rem, 9vw, 8.5rem);   /* 36px … 136px */
+}
+
+/* Cabeceras legales y similares (antes 14vw / sm:7xl / md:8xl). */
+@utility text-display-lg {
+  font-size: clamp(2rem, 8vw, 6rem);        /* 32px … 96px */
+}
+
+/* Títulos de sección (antes 8vw / sm:text-7xl). */
+@utility text-display {
+  font-size: clamp(1.875rem, 7vw, 4.5rem);  /* 30px … 72px */
+}
+
+/* Títulos de sección secundarios (antes 8vw / sm:text-6xl). */
+@utility text-display-sm {
+  font-size: clamp(1.75rem, 6.25vw, 3.75rem); /* 28px … 60px */
+}
+
+/*
+ * Fichas de producto. El texto viene de la base de datos, así que aquí no se
+ * puede calcular el tope contra una palabra conocida: el contenedor es más
+ * estrecho (`max-w-4xl`, 896 px), el máximo va más bajo y además se permite
+ * partir la palabra antes que desbordar.
+ */
+@utility text-display-detail {
+  font-size: clamp(2rem, 6vw, 5rem);        /* 32px … 80px */
+  overflow-wrap: break-word;
+}

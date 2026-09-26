@@ -5,10 +5,17 @@
 /* Nota: `scroll-behavior: smooth` ya se declara en theme.css (capa base). */
 
 /* Salta layout/paint de las secciones fuera de pantalla.
-   Soportado en Chromium, Safari 18+ y Firefox 125+. */
+   Soportado en Chromium, Safari 18+ y Firefox 125+.
+
+   La palabra clave `auto` del `contain-intrinsic-size` es importante: hace que
+   el navegador RECUERDE el alto real de la sección una vez renderizada y lo use
+   como estimación a partir de entonces, en vez de volver siempre a los 800 px
+   de placeholder. Sin ella, saltar a un ancla que está por debajo de varias
+   secciones sin renderizar aterriza desplazado: el destino se calcula con las
+   alturas estimadas y el documento se reajusta a mitad del scroll. */
 .cv-auto {
   content-visibility: auto;
-  contain-intrinsic-size: 1px 800px;
+  contain-intrinsic-size: auto 800px;
 }
 
 /*

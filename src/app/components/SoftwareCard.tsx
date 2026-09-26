@@ -44,7 +44,6 @@ function SoftwareCardImpl({ software }: SoftwareCardProps) {
         ref={ref}
         onMouseMove={handleMouseMove}
         to={`/software/${software.slug}`}
-        data-cursor="ver"
         className="group block relative w-full h-full dark:border-white/10 border-black/10 border hover:border-[#1B56D2]/50 transition-colors duration-500 dark:bg-[#0a0a0a] bg-zinc-100 rounded-3xl overflow-hidden"
       >
         <div
@@ -70,7 +69,6 @@ function SoftwareCardImpl({ software }: SoftwareCardProps) {
           </div>
 
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border dark:border-white/5 border-black/5 mb-10 shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60" />
             {software.thumbnail_url ? (
               /*
                * `transition-all` hacía que el navegador vigilase todas las

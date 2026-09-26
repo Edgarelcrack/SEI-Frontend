@@ -119,8 +119,15 @@ export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
                 {isActive ? (
                   <SoftwareCard software={item} />
                 ) : (
-                  <div className="pointer-events-none rounded-3xl overflow-hidden border dark:border-white/10 border-black/10 dark:bg-[#0a0a0a] bg-zinc-100">
-                    <div className="relative w-full aspect-[4/5] overflow-hidden">
+                  /*
+                   * Silueta de la tarjeta inactiva. Imita el reparto de
+                   * SoftwareCard (imagen apaisada arriba, título abajo) en vez
+                   * de estirar el thumbnail en un marco vertical: así la
+                   * imagen se ve con su formato real y la altura sigue
+                   * casando con la tarjeta activa.
+                   */
+                  <div className="pointer-events-none rounded-3xl overflow-hidden border dark:border-white/10 border-black/10 dark:bg-[#0a0a0a] bg-zinc-100 p-6 flex flex-col min-h-[500px]">
+                    <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border dark:border-white/5 border-black/5 shadow-2xl">
                       {item.thumbnail_url ? (
                         <img
                           src={item.thumbnail_url}
@@ -133,14 +140,14 @@ export function PlatformsCarousel({ items }: PlatformsCarouselProps) {
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-[#1B56D2]/20 to-[#1B56D2]/5" />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <div className="text-xs font-bold tracking-widest uppercase text-white/70 mb-2">
-                          {item.tags[0]?.name ?? "Software"}
-                        </div>
-                        <div className="text-2xl font-black tracking-tighter uppercase text-white">
-                          {item.name}
-                        </div>
+                    </div>
+
+                    <div className="mt-auto pt-8">
+                      <div className="text-xs font-bold tracking-widest uppercase text-zinc-500 mb-2">
+                        {item.tags[0]?.name ?? "Software"}
+                      </div>
+                      <div className="text-2xl font-black tracking-tighter uppercase dark:text-white text-zinc-900">
+                        {item.name}
                       </div>
                     </div>
                   </div>
